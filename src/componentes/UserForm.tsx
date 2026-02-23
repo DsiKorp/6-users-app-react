@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { User } from "../interfaces/users.interfaces";
+import { useSwal } from "../hooks/useSwal";
 
 interface Props {
     userSelected?: User;
@@ -17,6 +18,7 @@ export const UserForm = ({ userSelected, onAddUser }: Props) => {
 
     const [userForm, setUserForm] = useState(userSelected || initialUserForm);
     const { id, userName, email, password } = userForm;
+    const { fireSwal } = useSwal();
 
     const isAddingMode: boolean = (id === 0 || id === undefined);
 
@@ -42,7 +44,11 @@ export const UserForm = ({ userSelected, onAddUser }: Props) => {
         event.preventDefault();
 
         if (!userName || !email || (isAddingMode && !password)) {
-            alert("Todos los campos son obligatorios");
+            fireSwal({
+                title: 'Error',
+                html: 'Todos los campos son obligatorios',
+                icon: 'error'
+            });
             return;
         }
 

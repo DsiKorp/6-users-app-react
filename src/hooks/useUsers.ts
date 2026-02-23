@@ -1,8 +1,8 @@
-import { useReducer } from "react";
-import Swal from "sweetalert2";
+import { useReducer, useState } from "react";
 
 import type { User } from "../interfaces/users.interfaces";
 import { usersReducer } from "../reducers/usersReducer";
+import { useSwal } from "./useSwal";
 
 // TODO guardar en localStorage, para persistir los datos aunque se recargue la página
 const initialUsers: User[] = [
@@ -41,6 +41,10 @@ const initialUsers: User[] = [
 export const useUsers = () => {
 
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
+    const [userSelected, setUserSelected] = useState<User>({} as User);
+    const { fireSwal, fireSwalUserAction } = useSwal();
+
+
     console.log({ users });
 
     const handleAddUser = (user: User) => {
@@ -50,30 +54,53 @@ export const useUsers = () => {
         });
 
         const action = (user.id === 0) ? 'Creado' : 'Actualizado';
-
-        Swal.fire(
-            `Usuario ${action}`,
-            `El usuario ha sido ${action.toLowerCase()} con exito!`,
-            'success'
-        );
+        fireSwal({
+            title: `Usuario ${action}`,
+            html: `El usuario ha sido <strong>${action.toLowerCase()}</strong> con exito!`,
+            footer: 'Operacion completada.',
+            icon: 'success'
+        });
     }
 
     const handleRemoveUser = (id: number) => {
-        dispatch({
-            type: 'REMOVE_USER',
-            payload: id
-        });
-        Swal.fire(
-            'Usuario Eliminado!',
-            'El usuario ha sido eliminado con exito!',
-            'success'
-        );
+
+        fireSwalUserAction({
+            title: 'Esta seguro que desea eliminar?',
+            html: "Cuidado el usuario sera <strong>eliminado</strong>!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, eliminar!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                dispatch({
+                    type: 'REMOVE_USER',
+                    payload: id,
+                });
+                fireSwal({
+                    title: 'Usuario Eliminado!',
+                    html: 'El usuario ha sido <strong>eliminado</strong> con exito!',
+                    footer: 'Operacion completada.',
+                    icon: 'success'
+                });
+            }
+        })
+    }
+
+    const handlereSelectedUser = (user: User) => {
+        console.log({ user });
+        setUserSelected({ ...user });
     }
 
     return {
+        // Properties
         users,
-
+        userSelected,
+        // Methods
         handleAddUser,
         handleRemoveUser,
+        handlereSelectedUser
     }
 }
