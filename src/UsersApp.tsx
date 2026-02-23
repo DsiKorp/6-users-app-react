@@ -15,8 +15,6 @@ export const UsersApp = () => {
     const handlereSelectedUser = (user: User) => {
         console.log({ user });
         setUserSelected({ ...user });
-
-
     }
 
     return (

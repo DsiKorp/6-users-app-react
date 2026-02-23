@@ -20,13 +20,13 @@ export const UserForm = ({ userSelected, onAddUser }: Props) => {
 
     const isAddingMode: boolean = (id === 0 || id === undefined);
 
-    console.log({ id })
+    // console.log({ id })
 
     useEffect(() => {
         if (userSelected) {
             setUserForm({
                 ...userSelected,
-                // password: ""
+                password: ""
             });
         }
     }, [userSelected]);
