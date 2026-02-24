@@ -5,6 +5,7 @@ import { useSwal } from "../hooks/useSwal";
 interface Props {
     userSelected?: User;
     onAddUser: (user: User) => void;
+    handleCloseForm: () => void;
 }
 
 const initialUserForm = {
@@ -14,7 +15,7 @@ const initialUserForm = {
     password: ""
 }
 
-export const UserForm = ({ userSelected, onAddUser }: Props) => {
+export const UserForm = ({ userSelected, onAddUser, handleCloseForm }: Props) => {
 
     const [userForm, setUserForm] = useState(userSelected || initialUserForm);
     const { id, userName, email, password } = userForm;
@@ -25,11 +26,13 @@ export const UserForm = ({ userSelected, onAddUser }: Props) => {
     // console.log({ id })
 
     useEffect(() => {
-        if (userSelected) {
+        if (userSelected?.id) {
             setUserForm({
                 ...userSelected,
                 password: ""
             });
+        } else {
+            setUserForm(initialUserForm);
         }
     }, [userSelected]);
 
@@ -46,7 +49,7 @@ export const UserForm = ({ userSelected, onAddUser }: Props) => {
         if (!userName || !email || (isAddingMode && !password)) {
             fireSwal({
                 title: 'Error',
-                html: 'Todos los campos son obligatorios',
+                html: 'Todos los campos <strong>son obligatorios</strong>',
                 icon: 'error'
             });
             return;
@@ -54,6 +57,11 @@ export const UserForm = ({ userSelected, onAddUser }: Props) => {
 
         onAddUser({ ...userForm });
         setUserForm(initialUserForm);
+    }
+
+    const onCloseForm = () => {
+        setUserForm(initialUserForm);
+        handleCloseForm();
     }
 
 
@@ -95,6 +103,9 @@ export const UserForm = ({ userSelected, onAddUser }: Props) => {
                 />
                 <button type="submit" className="btn btn-primary">
                     {isAddingMode ? "Crear Usuario" : "Actualizar Usuario"}
+                </button>
+                <button type="button" className="btn btn-secondary mx-3" onClick={onCloseForm}>
+                    Cerrar
                 </button>
             </form>
         </>

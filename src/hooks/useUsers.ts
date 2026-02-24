@@ -1,8 +1,8 @@
 import { useReducer, useState } from "react";
 
+import { useSwal } from "./useSwal";
 import type { User } from "../interfaces/users.interfaces";
 import { usersReducer } from "../reducers/usersReducer";
-import { useSwal } from "./useSwal";
 
 // TODO guardar en localStorage, para persistir los datos aunque se recargue la página
 const initialUsers: User[] = [
@@ -43,23 +43,26 @@ export const useUsers = () => {
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState<User>({} as User);
     const { fireSwal, fireSwalUserAction } = useSwal();
+    const [isVisibleForm, setIsVisibleForm] = useState(false);
 
 
     console.log({ users });
 
     const handleAddUser = (user: User) => {
+        const isNewUser = !user.id;
         dispatch({
-            type: (user.id === 0) ? 'ADD_USER' : 'UPDATE_USER',
+            type: isNewUser ? 'ADD_USER' : 'UPDATE_USER',
             payload: user
         });
 
-        const action = (user.id === 0) ? 'Creado' : 'Actualizado';
+        const action = isNewUser ? 'Creado' : 'Actualizado';
         fireSwal({
             title: `Usuario ${action}`,
             html: `El usuario ha sido <strong>${action.toLowerCase()}</strong> con exito!`,
             footer: 'Operacion completada.',
             icon: 'success'
         });
+        handleCloseForm();
     }
 
     const handleRemoveUser = (id: number) => {
@@ -92,15 +95,28 @@ export const useUsers = () => {
     const handlereSelectedUser = (user: User) => {
         console.log({ user });
         setUserSelected({ ...user });
+        setIsVisibleForm(true);
+    }
+
+    const handleOpenForm = () => {
+        setIsVisibleForm(true);
+    }
+
+    const handleCloseForm = () => {
+        setIsVisibleForm(false);
+        setUserSelected({} as User);
     }
 
     return {
         // Properties
+        isVisibleForm,
         users,
         userSelected,
         // Methods
         handleAddUser,
+        handleCloseForm,
+        handleOpenForm,
         handleRemoveUser,
-        handlereSelectedUser
+        handlereSelectedUser,
     }
 }
