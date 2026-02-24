@@ -20,7 +20,7 @@ export const Navbar = ({ login, handlerLogout }: Props) => {
                     </span>
                     <button
                         onClick={handlerLogout}
-                        className="btn btn-outline-success">
+                        className="btn btn-outline-warning">
                         Logout
                     </button>
                 </div>
