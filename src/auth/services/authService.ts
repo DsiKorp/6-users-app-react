@@ -1,5 +1,6 @@
 import type { Credentials } from "../../interfaces/loginUser.interface";
 
-export const loginUser = (userLogin: Credentials) => {
-    return (userLogin.username === 'admin' && userLogin.password === '12345');
+// userLogin
+export const loginUser = ({ username, password }: Credentials) => {
+    return (username === 'admin' && password === '12345');
 }
