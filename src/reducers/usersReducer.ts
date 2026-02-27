@@ -1,6 +1,12 @@
 import type { User } from "../interfaces/users.interfaces"
 
-export const usersReducer = (state: User[] = [], action: any): User[] => {
+export type UsersAction =
+    | { type: 'ADD_USER'; payload: User }
+    | { type: 'REMOVE_USER'; payload: number }
+    | { type: 'UPDATE_USER'; payload: User };
+
+
+export const usersReducer = (state: User[] = [], action: UsersAction): User[] => {
 
     switch (action.type) {
         case 'ADD_USER':

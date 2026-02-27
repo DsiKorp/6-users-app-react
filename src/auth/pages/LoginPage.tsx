@@ -1,7 +1,6 @@
 import { useState } from "react";
-import Swal from "sweetalert2";
 import type { Credentials } from "../../interfaces/loginUser.interface";
-import { loginUser } from "../services/authService";
+import { useSwal } from "../../hooks/useSwal";
 
 interface Props {
     handlerLogin: (credentials: Credentials) => void;
@@ -11,8 +10,9 @@ const initialLoginForm = {
     username: '',
     password: '',
 }
-export const LoginPage = ({handlerLogin}: Props) => {
+export const LoginPage = ({ handlerLogin }: Props) => {
 
+    const { fireSwal } = useSwal();
     const [loginForm, setLoginForm] = useState(initialLoginForm);
     const { username, password } = loginForm;
 
@@ -26,7 +26,12 @@ export const LoginPage = ({handlerLogin}: Props) => {
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!username || !password) {
-            Swal.fire('Campos Obligatorios', 'Username y password requeridos', 'info');
+            fireSwal({
+                title: 'Campos Obligatorios',
+                html: 'Username y password <strong>son requeridos</strong>',
+                icon: 'info'
+            });
+            return;
         }
 
         // aca implementamos el login

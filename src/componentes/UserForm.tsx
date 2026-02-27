@@ -8,16 +8,16 @@ interface Props {
     handleCloseForm: () => void;
 }
 
-const initialUserForm = {
-    id: 0,
-    userName: "",
-    email: "",
-    password: ""
-}
+// const initialUserForm = {
+//     id: 0,
+//     userName: "",
+//     email: "",
+//     password: ""
+// }
 
 export const UserForm = ({ userSelected, onAddUser, handleCloseForm }: Props) => {
 
-    const [userForm, setUserForm] = useState(userSelected || initialUserForm);
+    const [userForm, setUserForm] = useState(userSelected || {} as User);
     const { id, userName, email, password } = userForm;
     const { fireSwal } = useSwal();
 
@@ -32,7 +32,7 @@ export const UserForm = ({ userSelected, onAddUser, handleCloseForm }: Props) =>
                 password: ""
             });
         } else {
-            setUserForm(initialUserForm);
+            setUserForm({} as User);
         }
     }, [userSelected]);
 
@@ -56,11 +56,11 @@ export const UserForm = ({ userSelected, onAddUser, handleCloseForm }: Props) =>
         }
 
         onAddUser({ ...userForm });
-        setUserForm(initialUserForm);
+        setUserForm({} as User);
     }
 
     const onCloseForm = () => {
-        setUserForm(initialUserForm);
+        setUserForm({} as User);
         handleCloseForm();
     }
 

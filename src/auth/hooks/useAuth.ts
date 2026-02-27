@@ -1,35 +1,38 @@
 import { useReducer } from "react";
-import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+
+import { useSwal } from "../../hooks/useSwal";
 import { loginUser } from "../services/authService";
-import type { AuthState, Credentials } from "../../interfaces/loginUser.interface";
-import { loginReducer } from "../reducers/loginReducer";
+import type { Credentials, LoggedUser } from "../../interfaces/loginUser.interface";
+import { loginReducer, getLoginInitialState } from "../reducers/loginReducer";
 
-
-const initialLogin: AuthState = JSON.parse(sessionStorage.getItem('login') || JSON.stringify({
-    isAuth: false,
-    user: undefined,
-}));
 
 export const useAuth = () => {
+    const navigate = useNavigate();
+    const { fireSwal } = useSwal();
 
-    const [login, dispatch] = useReducer(loginReducer, initialLogin);
+    const [login, dispatch] = useReducer(loginReducer, getLoginInitialState());
 
-    const handlerLogin = ({ username, password }: Credentials) => {
-        const isLogin = loginUser({ username, password });
+    const handlerLogin = (userCredentials: Credentials) => {
+        const isLogin = loginUser(userCredentials);
 
         if (isLogin) {
-            const user = { username: 'admin' }
+            const loggedUser: LoggedUser = { username: userCredentials.username };
             dispatch({
                 type: 'LOGIN',
-                payload: user,
+                payload: loggedUser,
             });
-            sessionStorage.setItem('login', JSON.stringify({
+            sessionStorage.setItem('loggedUser', JSON.stringify({
                 isAuth: true,
-                user,
+                loggedUser,
             }));
-
+            navigate('/users');
         } else {
-            Swal.fire('Error Login', 'Username o password invalidos', 'error');
+            fireSwal({
+                title: 'Error Login',
+                html: 'Username o password  <strong>invalidos</strong>',
+                icon: 'error'
+            });
         }
     }
 
@@ -37,8 +40,10 @@ export const useAuth = () => {
         dispatch({
             type: 'LOGOUT',
         });
-        sessionStorage.removeItem('login');
+        sessionStorage.removeItem('loggedUser');
+        navigate('/login');
     }
+
     return {
         login,
         handlerLogin,

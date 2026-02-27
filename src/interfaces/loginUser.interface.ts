@@ -1,10 +1,14 @@
 
 export interface Credentials {
     username: string;
-    password: string;
+    password?: string;
+}
+
+export interface LoggedUser {
+    username: string;
 }
 
 export interface AuthState {
     isAuth: boolean;
-    user: Credentials | undefined;
+    loggedUser: LoggedUser | null;
 }
