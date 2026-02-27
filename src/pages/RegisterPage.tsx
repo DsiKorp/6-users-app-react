@@ -26,6 +26,8 @@ export const RegisterPage = ({ users = [], handleAddUser }: Props) => {
 
             setUserSelected({} as User);
         }
+
+        setUserSelected({} as User);
     }, [id, users]);
 
     return (
