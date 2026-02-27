@@ -1,3 +1,4 @@
+import { NavLink } from "react-router";
 import type { User } from "../interfaces/users.interfaces"
 
 interface Props {
@@ -15,9 +16,20 @@ export const UserRow = ({ user: { id, userName, email }, onRemoveUser, onUpdateU
                 <td>{userName}</td>
                 <td>{email}</td>
                 <td>
-                    <button onClick={() => onUpdateUser({ id, userName, email })} type="button" className="btn btn-outline-primary btn-sm">
+                    <button
+                        onClick={() => onUpdateUser({ id, userName, email })}
+                        type="button"
+                        className="btn btn-outline-primary btn-sm">
                         Update
                     </button>
+                </td>
+                <td>
+                    <NavLink
+                        to={`/users/edit/${id}`}
+                        className="btn btn-outline-secondary btn-sm"
+                    >
+                        Update Page
+                    </NavLink>
                 </td>
                 <td>
                     <button onClick={() => onRemoveUser(id!)} type="button" className="btn btn-outline-danger btn-sm">

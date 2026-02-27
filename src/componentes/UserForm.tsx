@@ -5,15 +5,8 @@ import { useSwal } from "../hooks/useSwal";
 interface Props {
     userSelected?: User;
     onAddUser: (user: User) => void;
-    handleCloseForm: () => void;
+    handleCloseForm?: () => void;
 }
-
-// const initialUserForm = {
-//     id: 0,
-//     userName: "",
-//     email: "",
-//     password: ""
-// }
 
 export const UserForm = ({ userSelected, onAddUser, handleCloseForm }: Props) => {
 
@@ -21,7 +14,7 @@ export const UserForm = ({ userSelected, onAddUser, handleCloseForm }: Props) =>
     const { id, userName, email, password } = userForm;
     const { fireSwal } = useSwal();
 
-    const isAddingMode: boolean = (id === 0 || id === undefined);
+    const isAddingMode: boolean = (id === 0 || !id);
 
     // console.log({ id })
 
@@ -61,53 +54,82 @@ export const UserForm = ({ userSelected, onAddUser, handleCloseForm }: Props) =>
 
     const onCloseForm = () => {
         setUserForm({} as User);
-        handleCloseForm();
+        handleCloseForm?.();
     }
 
 
     return (
-        <>
-            <div>Formulario de Usuario</div>
-            <form onSubmit={onSubmit}>
-                <input type="text"
-                    name="userName"
-                    className="form-control my-3 w-75"
-                    placeholder="Usuario"
-                    onChange={onInputChange}
-                    value={userName}
-                />
-                <input type="email"
-                    name="email"
-                    className="form-control my-3 w-75"
-                    placeholder="Email"
-                    onChange={onInputChange}
-                    value={email}
-                />
-                {
-                    isAddingMode && (
-                        <input type="password"
-                            name="password"
-                            className="form-control my-3 w-75"
-                            placeholder="Password"
-                            onChange={onInputChange}
-                            value={password}
-                        />
-                    )
+        <form onSubmit={onSubmit}>
+            <div className="form-group">
+                <label className="form-label">Usuario</label>
+                <div className="input-icon">
+                    <i className="fa-solid fa-user"></i>
+                    <input
+                        type="text"
+                        name="userName"
+                        className="form-control"
+                        placeholder="Nombre de usuario"
+                        onChange={onInputChange}
+                        value={userName || ''}
+                    />
+                </div>
+            </div>
 
-                }
+            <div className="form-group">
+                <label className="form-label">Email</label>
+                <div className="input-icon">
+                    <i className="fa-solid fa-envelope"></i>
+                    <input
+                        type="email"
+                        name="email"
+                        className="form-control"
+                        placeholder="correo@ejemplo.com"
+                        onChange={onInputChange}
+                        value={email || ''}
+                    />
+                </div>
+            </div>
 
-                <input
-                    type="hidden"
-                    name="id"
-                    value={id}
-                />
-                <button type="submit" className="btn btn-primary">
+            {
+                isAddingMode && (
+                    <div className="form-group">
+                        <label className="form-label">Password</label>
+                        <div className="input-icon">
+                            <i className="fa-solid fa-lock"></i>
+                            <input
+                                type="password"
+                                name="password"
+                                className="form-control"
+                                placeholder="Contraseña segura"
+                                onChange={onInputChange}
+                                value={password || ''}
+                            />
+                        </div>
+                    </div>
+                )
+            }
+
+            <input
+                type="hidden"
+                name="id"
+                value={id ?? ''}
+            />
+
+            <div className="d-flex gap-2 mt-4">
+                <button type="submit" className="btn-login flex-grow-1">
+                    <i className={`fa-solid ${isAddingMode ? 'fa-plus' : 'fa-save'} me-2`}></i>
                     {isAddingMode ? "Crear Usuario" : "Actualizar Usuario"}
                 </button>
-                <button type="button" className="btn btn-secondary mx-3" onClick={onCloseForm}>
-                    Cerrar
-                </button>
-            </form>
-        </>
+
+                {
+                    handleCloseForm && (
+                        <button type="button" className="btn-secondary-modern" onClick={onCloseForm}>
+                            <i className="fa-solid fa-xmark me-1"></i>
+                            Cerrar
+                        </button>
+                    )
+                }
+            </div>
+        </form>
     )
 }

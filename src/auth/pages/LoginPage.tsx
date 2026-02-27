@@ -41,56 +41,56 @@ export const LoginPage = ({ handlerLogin }: Props) => {
         setLoginForm(initialLoginForm);
     }
     return (
-        <>
-            <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content border-0 shadow">
-                        <div className="modal-header border-0 pb-0">
-                            <div>
-                                <h5 className="modal-title mb-1">Login Page</h5>
-                                <p className="text-muted mb-0">Accede con tus credenciales</p>
+        <div className="login-container">
+            <div className="login-card">
+                <div className="login-header">
+                    <div className="icon-circle">
+                        <i className="fa-solid fa-user-lock"></i>
+                    </div>
+                    <h2>Bienvenido</h2>
+                    <p>Accede con tus credenciales</p>
+                </div>
+                <div className="login-body">
+                    <form onSubmit={onSubmit}>
+                        <div className="form-group">
+                            <label className="form-label">Username</label>
+                            <div className="input-icon">
+                                <i className="fa-solid fa-user"></i>
+                                <input
+                                    className="form-control"
+                                    placeholder="Tu usuario"
+                                    name="username"
+                                    value={username}
+                                    onChange={onInputChange}
+                                    autoComplete="username"
+                                />
                             </div>
                         </div>
-                        <form onSubmit={onSubmit}>
-                            <div className="modal-body pt-3">
-                                <div className="mb-3">
-                                    <label className="form-label">Username</label>
-                                    <input
-                                        className="form-control"
-                                        placeholder="Tu usuario"
-                                        name="username"
-                                        value={username}
-                                        onChange={onInputChange}
-                                        autoComplete="username"
-                                    />
-                                </div>
 
-                                <div className="mb-3">
-                                    <label className="form-label">Password</label>
-                                    <input
-                                        className="form-control"
-                                        placeholder="Tu password"
-                                        type="password"
-                                        name="password"
-                                        value={password}
-                                        onChange={onInputChange}
-                                        autoComplete="current-password"
-                                    />
-                                </div>
+                        <div className="form-group">
+                            <label className="form-label">Password</label>
+                            <div className="input-icon">
+                                <i className="fa-solid fa-lock"></i>
+                                <input
+                                    className="form-control"
+                                    placeholder="Tu password"
+                                    type="password"
+                                    name="password"
+                                    value={password}
+                                    onChange={onInputChange}
+                                    autoComplete="current-password"
+                                />
                             </div>
-                            <div className="modal-footer border-0 pt-0">
-                                <div className="d-grid w-100">
-                                    <button className="btn btn-primary" type="submit">
-                                        Login
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+
+                        <button className="btn-login" type="submit">
+                            <i className="fa-solid fa-right-to-bracket me-2"></i>
+                            Iniciar Sesión
+                        </button>
+                    </form>
                 </div>
             </div>
-            <div className="modal-backdrop fade show"></div>
-        </>
+        </div>
     );
 
 }

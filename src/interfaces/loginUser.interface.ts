@@ -1,7 +1,7 @@
 
 export interface Credentials {
     username: string;
-    password?: string;
+    password: string;
 }
 
 export interface LoggedUser {

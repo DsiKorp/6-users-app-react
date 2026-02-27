@@ -1,12 +1,29 @@
 import { UserModalForm } from "../componentes/UserModalForm";
 import { UsersList } from "../componentes/UsersList";
-import { useUsers } from "../hooks/useUsers";
+import type { User } from '../interfaces/users.interfaces';
 
 
-export const UsersPage = () => {
+interface Props {
+    users: User[];
+    userSelected: User;
+    isVisibleForm: boolean;
+    handleAddUser: (user: User) => void;
+    handleRemoveUser: (id: number) => void;
+    handlereSelectedUser: (user: User) => void;
+    handleCloseForm: () => void;
+    handleOpenForm: () => void;
+}
 
-    const { users, userSelected, handleAddUser, handleRemoveUser,
-        handlereSelectedUser, isVisibleForm, handleCloseForm, handleOpenForm } = useUsers();
+export const UsersPage = ({
+    users,
+    userSelected,
+    handleAddUser,
+    handleRemoveUser,
+    handlereSelectedUser,
+    isVisibleForm,
+    handleCloseForm,
+    handleOpenForm
+}: Props) => {
 
     return (
         <>

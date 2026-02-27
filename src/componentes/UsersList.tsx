@@ -19,6 +19,7 @@ export const UsersList = ({ users, onRemoveUser, onUpdateUser }: Props) => {
                         <th>Usuario</th>
                         <th>Email</th>
                         <th>Update</th>
+                        <th>Update Page</th>
                         <th>Remove</th>
                     </tr>
                 </thead>
