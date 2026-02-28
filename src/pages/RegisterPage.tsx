@@ -28,7 +28,7 @@ export const RegisterPage = ({ users = [], handleAddUser }: Props) => {
         }
 
         setUserSelected({} as User);
-    }, [id, users]);
+    }, [id]);
 
     return (
         <div className="container my-4">

@@ -48,6 +48,17 @@ export const UserForm = ({ userSelected, onAddUser, handleCloseForm }: Props) =>
             return;
         }
 
+        // ya se valida en el input type email, 
+        // pero por las dudas validamos que incluya un @   
+        if (!email.includes('@')) {
+            fireSwal({
+                title: 'Error de validacion email',
+                html: 'El email debe ser valido, incluir un @!',
+                icon: 'error'
+            });
+            return;
+        }
+
         onAddUser({ ...userForm });
         setUserForm({} as User);
     }
