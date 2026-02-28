@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import type { User } from "../interfaces/users.interfaces";
 import { useSwal } from "../hooks/useSwal";
+import { UserContext } from "../context/UserContext";
 
 interface Props {
     userSelected?: User;
-    onAddUser: (user: User) => void;
+    //onAddUser: (user: User) => void;
     handleCloseForm?: () => void;
 }
 
-export const UserForm = ({ userSelected, onAddUser, handleCloseForm }: Props) => {
+export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
+
+    const { handleAddUser } = useContext(UserContext);
 
     const [userForm, setUserForm] = useState(userSelected || {} as User);
     const { id, userName, email, password } = userForm;
@@ -59,7 +62,7 @@ export const UserForm = ({ userSelected, onAddUser, handleCloseForm }: Props) =>
             return;
         }
 
-        onAddUser({ ...userForm });
+        handleAddUser({ ...userForm });
         setUserForm({} as User);
     }
 

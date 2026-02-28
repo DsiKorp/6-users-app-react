@@ -1,13 +1,15 @@
 import { NavLink } from "react-router";
 import type { User } from "../interfaces/users.interfaces"
+import { UserContext } from "../context/UserContext";
+import { useContext } from "react";
 
 interface Props {
     user: User;
-    onRemoveUser: (id: number) => void;
-    onUpdateUser: (user: User) => void;
 }
 
-export const UserRow = ({ user: { id, userName, email }, onRemoveUser, onUpdateUser }: Props) => {
+export const UserRow = ({ user: { id, userName, email } }: Props) => {
+    //onRemoveUser={} onUpdateUser={}
+    const { handleRemoveUser, handlereSelectedUser } = useContext(UserContext);
 
     return (
         <>
@@ -17,7 +19,7 @@ export const UserRow = ({ user: { id, userName, email }, onRemoveUser, onUpdateU
                 <td>{email}</td>
                 <td>
                     <button
-                        onClick={() => onUpdateUser({ id, userName, email })}
+                        onClick={() => handlereSelectedUser({ id, userName, email })}
                         type="button"
                         className="btn btn-outline-primary btn-sm">
                         Update
@@ -32,7 +34,7 @@ export const UserRow = ({ user: { id, userName, email }, onRemoveUser, onUpdateU
                     </NavLink>
                 </td>
                 <td>
-                    <button onClick={() => onRemoveUser(id!)} type="button" className="btn btn-outline-danger btn-sm">
+                    <button onClick={() => handleRemoveUser(id!)} type="button" className="btn btn-outline-danger btn-sm">
                         Remove
                     </button>
                 </td>

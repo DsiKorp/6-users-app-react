@@ -1,39 +1,18 @@
+import { useContext } from "react";
 import { UserModalForm } from "../componentes/UserModalForm";
 import { UsersList } from "../componentes/UsersList";
-import type { User } from '../interfaces/users.interfaces';
+import { UserContext } from "../context/UserContext";
 
 
-interface Props {
-    users: User[];
-    userSelected: User;
-    isVisibleForm: boolean;
-    handleAddUser: (user: User) => void;
-    handleRemoveUser: (id: number) => void;
-    handlereSelectedUser: (user: User) => void;
-    handleCloseForm: () => void;
-    handleOpenForm: () => void;
-}
+export const UsersPage = () => {
 
-export const UsersPage = ({
-    users,
-    userSelected,
-    handleAddUser,
-    handleRemoveUser,
-    handlereSelectedUser,
-    isVisibleForm,
-    handleCloseForm,
-    handleOpenForm
-}: Props) => {
+    const { users, isVisibleForm, handleOpenForm } = useContext(UserContext);
 
     return (
         <>
             {
                 isVisibleForm && (
-                    <UserModalForm
-                        userSelected={userSelected}
-                        handleAddUser={handleAddUser}
-                        handleCloseForm={handleCloseForm}
-                    />
+                    <UserModalForm />
                 )
             }
 
@@ -52,11 +31,7 @@ export const UsersPage = ({
                         {
                             users.length === 0
                                 ? <div className="alert alert-warning">No hay usuarios en el sistema!</div>
-                                : <UsersList
-                                    users={users}
-                                    onRemoveUser={handleRemoveUser}
-                                    onUpdateUser={handlereSelectedUser}
-                                />
+                                : <UsersList />
                         }
                     </div>
                 </div>

@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import { UserContext } from "../context/UserContext";
 import { UserForm } from "../componentes/UserForm"
 import type { User } from "../interfaces/users.interfaces";
 
-interface Props {
-    users?: User[];
-    handleAddUser: (user: User) => void;
-    //handleCloseForm: () => void;
-}
+export const RegisterPage = () => {
 
-export const RegisterPage = ({ users = [], handleAddUser }: Props) => {
+    const { users = [] } = useContext(UserContext);
 
     const [userSelected, setUserSelected] = useState<User>({} as User);
     const { id } = useParams();
@@ -45,7 +42,6 @@ export const RegisterPage = ({ users = [], handleAddUser }: Props) => {
                         <div className="register-body">
                             <UserForm
                                 userSelected={userSelected}
-                                onAddUser={handleAddUser}
                             />
                         </div>
                     </div>

@@ -1,13 +1,11 @@
-import type { User } from "../interfaces/users.interfaces";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 import { UserRow } from "./UserRow";
 
-interface Props {
-    users: User[];
-    onRemoveUser: (id: number) => void;
-    onUpdateUser: (user: User) => void;
-}
+export const UsersList = () => {
 
-export const UsersList = ({ users, onRemoveUser, onUpdateUser }: Props) => {
+    const { users } = useContext(UserContext);
+
     return (
         <>
             <div>Listado de Usuarios</div>
@@ -25,7 +23,7 @@ export const UsersList = ({ users, onRemoveUser, onUpdateUser }: Props) => {
                 </thead>
                 <tbody>
                     {users.map((user) => (
-                        <UserRow key={user.id} user={user} onRemoveUser={onRemoveUser} onUpdateUser={onUpdateUser} />
+                        <UserRow key={user.id} user={user} />
                     ))}
                 </tbody>
             </table>
