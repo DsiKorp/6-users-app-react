@@ -1,12 +1,15 @@
 import { NavLink } from "react-router-dom";
-import type { AuthState } from "../../interfaces/loginUser.interface";
+import { AuthContext } from "../../auth/context/AuthContext";
+import { useContext } from "react";
 
-interface Props {
-    login: AuthState;
-    handlerLogout: () => void;
-}
+// interface Props {
+//     login: AuthState;
+//     handlerLogout: () => void;
+// }
 
-export const Navbar = ({ login, handlerLogout }: Props) => {
+export const Navbar = () => {
+
+    const { login, handlerLogout } = useContext(AuthContext);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-modern">

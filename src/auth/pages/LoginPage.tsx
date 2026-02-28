@@ -1,17 +1,20 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import type { Credentials } from "../../interfaces/loginUser.interface";
 import { useSwal } from "../../hooks/useSwal";
+import { AuthContext } from "../context/AuthContext";
 
-interface Props {
-    handlerLogin: (credentials: Credentials) => void;
-}
+// interface Props {
+//     handlerLogin: (credentials: Credentials) => void;
+// }
 
-const initialLoginForm = {
+const initialLoginForm: Credentials = {
     username: '',
     password: '',
 }
-export const LoginPage = ({ handlerLogin }: Props) => {
 
+export const LoginPage = () => {
+
+    const { handlerLogin } = useContext(AuthContext);
     const { fireSwal } = useSwal();
     const [loginForm, setLoginForm] = useState(initialLoginForm);
     const { username, password } = loginForm;
