@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useSwal } from "../../hooks/useSwal";
@@ -7,11 +7,22 @@ import type { Credentials, LoggedUser } from "../../interfaces/loginUser.interfa
 import { loginReducer, getLoginInitialState } from "../reducers/loginReducer";
 
 
+export type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
+
 export const useAuth = () => {
     const navigate = useNavigate();
     const { fireSwal } = useSwal();
 
+    const getInitialAuthStatus = (isAuth: boolean): AuthStatus => {
+        if (isAuth) {
+            return 'authenticated';
+        } else {
+            return 'checking';
+        }
+    };
+
     const [login, dispatch] = useReducer(loginReducer, getLoginInitialState());
+    const [authStatus, setAuthStatus] = useState<AuthStatus>(getInitialAuthStatus(login.isAuth));
 
     const handlerLogin = (userCredentials: Credentials) => {
         const isLogin = loginUser(userCredentials);
@@ -26,8 +37,10 @@ export const useAuth = () => {
                 isAuth: true,
                 loggedUser,
             }));
+            setAuthStatus('authenticated');
             navigate('/users');
         } else {
+            setAuthStatus('not-authenticated');
             fireSwal({
                 title: 'Error Login',
                 html: 'Username o password  <strong>invalidos</strong>',
@@ -41,11 +54,13 @@ export const useAuth = () => {
             type: 'LOGOUT',
         });
         sessionStorage.removeItem('loggedUser');
+        setAuthStatus('not-authenticated');
         navigate('/login');
     }
 
     return {
         login,
+        authStatus,
         handlerLogin,
         handlerLogout,
     }
