@@ -25,7 +25,6 @@ export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
         if (userSelected?.id) {
             setUserForm({
                 ...userSelected,
-                password: ""
             });
         } else {
             setUserForm({} as User);

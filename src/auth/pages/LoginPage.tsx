@@ -1,7 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import type { Credentials } from "../../interfaces/loginUser.interface";
 import { useSwal } from "../../hooks/useSwal";
 import { AuthContext } from "../context/AuthContext";
+import { getGreetingAction } from "../../actions/get-initial-greeting.action";
+import { useQueryInitialGreeting } from "../../hooks/useQueryInitialGreeting";
 
 // interface Props {
 //     handlerLogin: (credentials: Credentials) => void;
@@ -15,6 +17,7 @@ const initialLoginForm: Credentials = {
 export const LoginPage = () => {
 
     const { handlerLogin } = useContext(AuthContext);
+    const { data: initialGreeting } = useQueryInitialGreeting();
     const { fireSwal } = useSwal();
     const [loginForm, setLoginForm] = useState(initialLoginForm);
     const { username, password } = loginForm;
@@ -39,10 +42,9 @@ export const LoginPage = () => {
 
         // aca implementamos el login
         handlerLogin({ username, password });
-
-
         setLoginForm(initialLoginForm);
     }
+
     return (
         <div className="login-container">
             <div className="login-card">
@@ -51,7 +53,7 @@ export const LoginPage = () => {
                         <i className="fa-solid fa-user-lock"></i>
                     </div>
                     <h2>Bienvenido</h2>
-                    <p>Accede con tus credenciales</p>
+                    <p>{initialGreeting}</p>
                 </div>
                 <div className="login-body">
                     <form onSubmit={onSubmit}>

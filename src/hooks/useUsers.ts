@@ -6,9 +6,9 @@ import { usersReducer } from "../reducers/usersReducer";
 import { useNavigate } from "react-router-dom";
 //import { initialUsers } from '../mock-data/users.mock';
 import { useQueryUsers } from "../auth/hooks/useQueryUsers";
-
-// TODO initialUsers guardar en localStorage, para persistir los datos aunque se recargue la página
-
+import { saveUserAction } from "../auth/actions/save-user.action";
+import { updateUserAction } from "../auth/actions/update-user.action";
+import { deleteUserAction } from "../auth/actions/delete-user.action";
 
 export const useUsers = () => {
 
@@ -22,20 +22,30 @@ export const useUsers = () => {
     useEffect(() => {
         if (!queriedUsers) return;
 
-        // console.log('-------------------------------------------------')
-        // console.log(queriedUsers);
-
         dispatch({
             type: 'SET_USERS',
             payload: queriedUsers,
         });
     }, [queriedUsers]);
 
-    const handleAddUser = (user: User) => {
+    const handleAddUser = async (user: User) => {
         const isNewUser = !user.id;
+        let userDb: User;
+
+        if (isNewUser) {
+            userDb = await saveUserAction(user);
+        } else {
+            const currentUser = users.find((stateUser) => stateUser.id === user.id);
+            const userToUpdate = {
+                ...user,
+                password: user.password || currentUser?.password,
+            };
+            userDb = await updateUserAction(userToUpdate);
+        }
+
         dispatch({
             type: isNewUser ? 'ADD_USER' : 'UPDATE_USER',
-            payload: user
+            payload: userDb
         });
 
         const action = isNewUser ? 'Creado' : 'Actualizado';
@@ -60,8 +70,10 @@ export const useUsers = () => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Si, eliminar!'
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
+
+                await deleteUserAction(id);
 
                 dispatch({
                     type: 'REMOVE_USER',

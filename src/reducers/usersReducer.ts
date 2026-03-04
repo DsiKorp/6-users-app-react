@@ -17,7 +17,7 @@ export const usersReducer = (state: User[] = [], action: UsersAction): User[] =>
                 ...state,
                 {
                     ...action.payload,
-                    id: new Date().getTime()
+                    //id: new Date().getTime()
                 }
             ];
         case 'REMOVE_USER':
@@ -28,7 +28,7 @@ export const usersReducer = (state: User[] = [], action: UsersAction): User[] =>
             return [
                 ...state.map(user =>
                     user.id === action.payload.id ?
-                        { ...action.payload, password: user.password } : user
+                        action.payload : user
                 )];
 
         default:
