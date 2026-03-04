@@ -1,5 +1,6 @@
 import { useEffect, useReducer, useState } from "react";
 import axios from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useSwal } from "./useSwal";
 import type { User } from "../interfaces/users.interfaces";
@@ -61,12 +62,17 @@ const getMappedValidationErrors = (validationError?: ValidationErrorResponse): U
 export const useUsers = () => {
 
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const { data: queriedUsers } = useQueryUsers();
     const [users, dispatch] = useReducer(usersReducer, []);
     const [userSelected, setUserSelected] = useState<User>({} as User);
     const { fireSwal, fireSwalUserAction } = useSwal();
     const [isVisibleForm, setIsVisibleForm] = useState(false);
     const [errors, setErrors] = useState(initialErrors);
+
+    const syncUsersCache = (updater: (currentUsers: User[]) => User[]) => {
+        queryClient.setQueryData<User[]>(['users'], (currentUsers = []) => updater(currentUsers));
+    };
 
     useEffect(() => {
         if (!queriedUsers) return;
@@ -99,6 +105,18 @@ export const useUsers = () => {
                 type: isNewUser ? 'ADD_USER' : 'UPDATE_USER',
                 payload: userDb
             });
+
+            syncUsersCache((currentUsers) => {
+                if (isNewUser) {
+                    return [...currentUsers, userDb];
+                }
+
+                return currentUsers.map((currentUser) =>
+                    currentUser.id === userDb.id ? userDb : currentUser
+                );
+            });
+
+            void queryClient.invalidateQueries({ queryKey: ['users'] });
 
             const action = isNewUser ? 'Creado' : 'Actualizado';
             fireSwal({
@@ -152,6 +170,10 @@ export const useUsers = () => {
                     type: 'REMOVE_USER',
                     payload: id,
                 });
+
+                syncUsersCache((currentUsers) => currentUsers.filter((user) => user.id !== id));
+                void queryClient.invalidateQueries({ queryKey: ['users'] });
+
                 fireSwal({
                     title: 'Usuario Eliminado!',
                     html: 'El usuario ha sido <strong>eliminado</strong> con exito!',
