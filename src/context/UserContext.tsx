@@ -9,12 +9,13 @@ import type { User } from "../interfaces/users.interfaces";
 
 interface UserContextProps {
     // state
+    errors: Record<string, string>;
     users: User[];
     userSelected: User | null;
     isVisibleForm: boolean;
 
     // Methods
-    handleAddUser: (user: User) => void;
+    handleAddUser: (user: User) => Promise<boolean>;
     handleRemoveUser: (id: number) => void;
     handlereSelectedUser: (user: User) => void;
     handleOpenForm: () => void;
@@ -28,6 +29,7 @@ export const UserContext = createContext({} as UserContextProps);
 export const UserContextProvider = ({ children }: PropsWithChildren) => {
 
     const {
+        errors,
         users,
         userSelected,
         handleAddUser,
@@ -40,6 +42,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
 
     return (
         <UserContext value={{
+            errors,
             users,
             userSelected,
             handleAddUser,

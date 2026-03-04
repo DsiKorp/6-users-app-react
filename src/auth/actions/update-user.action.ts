@@ -8,7 +8,6 @@ export const updateUserAction = async (user: User): Promise<User> => {
         console.log(data);
         return { ...data };
     } catch (error) {
-        console.log(error);
         throw error;
     }
 }

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import type { User } from "../interfaces/users.interfaces";
-import { useSwal } from "../hooks/useSwal";
 import { UserContext } from "../context/UserContext";
 
 interface Props {
@@ -11,11 +10,10 @@ interface Props {
 
 export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
 
-    const { handleAddUser } = useContext(UserContext);
+    const { handleAddUser, errors } = useContext(UserContext);
 
     const [userForm, setUserForm] = useState(userSelected || {} as User);
     const { id, username, email, password } = userForm;
-    const { fireSwal } = useSwal();
 
     const isAddingMode: boolean = (id === 0 || !id);
 
@@ -38,31 +36,30 @@ export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
         });
     };
 
-    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (!username || !email || (isAddingMode && !password)) {
-            fireSwal({
-                title: 'Error',
-                html: 'Todos los campos <strong>son obligatorios</strong>',
-                icon: 'error'
-            });
-            return;
-        }
+        // if (!username || !email || (isAddingMode && !password)) {
+        //     fireSwal({
+        //         title: 'Error',
+        //         html: 'Todos los campos <strong>son obligatorios</strong>',
+        //         icon: 'error'
+        //     });
+        //     return;
+        // }
 
         // ya se valida en el input type email, 
         // pero por las dudas validamos que incluya un @   
-        if (!email.includes('@')) {
-            fireSwal({
-                title: 'Error de validacion email',
-                html: 'El email debe ser valido, incluir un @!',
-                icon: 'error'
-            });
-            return;
-        }
+        // if (!email.includes('@')) {
+        //     fireSwal({
+        //         title: 'Error de validacion email',
+        //         html: 'El email debe ser valido, incluir un @!',
+        //         icon: 'error'
+        //     });
+        //     return;
+        // }
 
-        handleAddUser({ ...userForm });
-        setUserForm({} as User);
+        await handleAddUser({ ...userForm });
     }
 
     const onCloseForm = () => {
@@ -85,6 +82,7 @@ export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
                         onChange={onInputChange}
                         value={username || ''}
                     />
+                    <p className="text-danger">{errors?.username}</p>
                 </div>
             </div>
 
@@ -93,13 +91,14 @@ export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
                 <div className="input-icon">
                     <i className="fa-solid fa-envelope"></i>
                     <input
-                        type="email"
+                        type="text"
                         name="email"
                         className="form-control"
                         placeholder="correo@ejemplo.com"
                         onChange={onInputChange}
                         value={email || ''}
                     />
+                    <p className="text-danger">{errors?.email}</p>
                 </div>
             </div>
 
@@ -117,6 +116,7 @@ export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
                                 onChange={onInputChange}
                                 value={password || ''}
                             />
+                            <p className="text-danger">{errors?.password}</p>
                         </div>
                     </div>
                 )
