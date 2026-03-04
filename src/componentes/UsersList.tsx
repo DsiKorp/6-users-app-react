@@ -5,6 +5,8 @@ import { UserRow } from "./UserRow";
 export const UsersList = () => {
 
     const { users } = useContext(UserContext);
+    console.log('********************************')
+    console.log({ users });
 
     return (
         <>

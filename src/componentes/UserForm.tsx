@@ -14,7 +14,7 @@ export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
     const { handleAddUser } = useContext(UserContext);
 
     const [userForm, setUserForm] = useState(userSelected || {} as User);
-    const { id, userName, email, password } = userForm;
+    const { id, username, email, password } = userForm;
     const { fireSwal } = useSwal();
 
     const isAddingMode: boolean = (id === 0 || !id);
@@ -42,7 +42,7 @@ export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (!userName || !email || (isAddingMode && !password)) {
+        if (!username || !email || (isAddingMode && !password)) {
             fireSwal({
                 title: 'Error',
                 html: 'Todos los campos <strong>son obligatorios</strong>',
@@ -80,11 +80,11 @@ export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
                     <i className="fa-solid fa-user"></i>
                     <input
                         type="text"
-                        name="userName"
+                        name="username"
                         className="form-control"
                         placeholder="Nombre de usuario"
                         onChange={onInputChange}
-                        value={userName || ''}
+                        value={username || ''}
                     />
                 </div>
             </div>

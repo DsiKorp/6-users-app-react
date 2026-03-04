@@ -1,10 +1,11 @@
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 import { useSwal } from "./useSwal";
 import type { User } from "../interfaces/users.interfaces";
 import { usersReducer } from "../reducers/usersReducer";
 import { useNavigate } from "react-router-dom";
-import { initialUsers } from "../mock-data/users.mock";
+//import { initialUsers } from '../mock-data/users.mock';
+import { useQueryUsers } from "../auth/hooks/useQueryUsers";
 
 // TODO initialUsers guardar en localStorage, para persistir los datos aunque se recargue la página
 
@@ -12,13 +13,23 @@ import { initialUsers } from "../mock-data/users.mock";
 export const useUsers = () => {
 
     const navigate = useNavigate();
-    const [users, dispatch] = useReducer(usersReducer, initialUsers);
+    const { data: queriedUsers } = useQueryUsers();
+    const [users, dispatch] = useReducer(usersReducer, []);
     const [userSelected, setUserSelected] = useState<User>({} as User);
     const { fireSwal, fireSwalUserAction } = useSwal();
     const [isVisibleForm, setIsVisibleForm] = useState(false);
 
+    useEffect(() => {
+        if (!queriedUsers) return;
 
-    console.log({ users });
+        // console.log('-------------------------------------------------')
+        // console.log(queriedUsers);
+
+        dispatch({
+            type: 'SET_USERS',
+            payload: queriedUsers,
+        });
+    }, [queriedUsers]);
 
     const handleAddUser = (user: User) => {
         const isNewUser = !user.id;

@@ -7,19 +7,23 @@ interface Props {
     user: User;
 }
 
-export const UserRow = ({ user: { id, userName, email } }: Props) => {
+export const UserRow = ({ user: { id, username, email } }: Props) => {
     //onRemoveUser={} onUpdateUser={}
     const { handleRemoveUser, handlereSelectedUser } = useContext(UserContext);
+
+    // console.log('id: ', id);
+    // console.log('username: ', username);
+    // console.log('email: ', email);
 
     return (
         <>
             <tr key={id}>
                 <td>{id}</td>
-                <td>{userName}</td>
+                <td>{username}</td>
                 <td>{email}</td>
                 <td>
                     <button
-                        onClick={() => handlereSelectedUser({ id, userName, email })}
+                        onClick={() => handlereSelectedUser({ id, username, email })}
                         type="button"
                         className="btn btn-outline-primary btn-sm">
                         Update

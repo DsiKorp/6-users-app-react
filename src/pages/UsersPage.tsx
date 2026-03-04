@@ -7,6 +7,7 @@ import { UserContext } from "../context/UserContext";
 export const UsersPage = () => {
 
     const { users, isVisibleForm, handleOpenForm } = useContext(UserContext);
+    const hasUsers = (users?.length ?? 0) > 0;
 
     return (
         <>
@@ -28,10 +29,9 @@ export const UsersPage = () => {
                             Nuevo Usuario
                         </button>
 
-                        {
-                            users.length === 0
-                                ? <div className="alert alert-warning">No hay usuarios en el sistema!</div>
-                                : <UsersList />
+                        {!hasUsers
+                            ? <div className="alert alert-warning">No hay usuarios en el sistema!</div>
+                            : <UsersList />
                         }
                     </div>
                 </div>

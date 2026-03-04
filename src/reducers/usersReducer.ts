@@ -1,6 +1,7 @@
 import type { User } from "../interfaces/users.interfaces"
 
 export type UsersAction =
+    | { type: 'SET_USERS'; payload: User[] }
     | { type: 'ADD_USER'; payload: User }
     | { type: 'REMOVE_USER'; payload: number }
     | { type: 'UPDATE_USER'; payload: User };
@@ -9,6 +10,8 @@ export type UsersAction =
 export const usersReducer = (state: User[] = [], action: UsersAction): User[] => {
 
     switch (action.type) {
+        case 'SET_USERS':
+            return [...action.payload];
         case 'ADD_USER':
             return [
                 ...state,
