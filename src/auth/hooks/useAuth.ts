@@ -1,21 +1,27 @@
 import { useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useSwal } from "../../hooks/useSwal";
-import { loginUser } from "../services/authService";
 import type { Credentials, LoggedUser } from "../../interfaces/loginUser.interface";
 import { loginReducer, getLoginInitialState } from "../reducers/loginReducer";
 import { loginAction } from "../actions/login.action";
-import type { LoginResponse } from "../../interfaces/loginResponse.interface";
-//import { useAuthQuery } from "./useAuthQuery";
+import { AUTH_QUERY_KEY } from "./useAuthQuery";
 
 
 export type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 
 export const useAuth = () => {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const { fireSwal } = useSwal();
-    //const { data: queriedAuth, isLoading } = useAuthQuery();
+
+    const { mutateAsync: executeLogin } = useMutation({
+        mutationFn: loginAction,
+        onSuccess: (response) => {
+            queryClient.setQueryData(AUTH_QUERY_KEY, response);
+        },
+    });
 
     const getInitialAuthStatus = (isAuth: boolean): AuthStatus => {
         if (isAuth) {
@@ -32,13 +38,14 @@ export const useAuth = () => {
         //const isLogin = loginUser(userCredentials);
 
         try {
-            const loginResponse: LoginResponse = await loginAction(userCredentials);
+            const loginResponse = await executeLogin(userCredentials);
             console.log({ loginResponse });
 
             const token = loginResponse.token;
             const claims = token.split('.')[1];
             const decodedClaims = JSON.parse(atob(claims));
-            console.log(decodedClaims);
+            console.log('-------------------------------------------------------');
+            console.log({ decodedClaims });
 
             const loggedUser: LoggedUser = { username: decodedClaims.username };
 
@@ -86,6 +93,11 @@ export const useAuth = () => {
         dispatch({
             type: 'LOGOUT',
         });
+
+        // Clean users cache on logout to avoid stale or unauthorized data.
+        queryClient.removeQueries({ queryKey: ['users'] });
+        queryClient.removeQueries({ queryKey: AUTH_QUERY_KEY });
+
         sessionStorage.removeItem('authState');
         sessionStorage.removeItem('token');
         sessionStorage.clear();

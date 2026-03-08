@@ -1,6 +1,7 @@
 import { usersApi } from "../api/usersApi";
 
 export const getGreetingAction = async () => {
+
     try {
         const { data } = await usersApi.get<string>("/hello");
 

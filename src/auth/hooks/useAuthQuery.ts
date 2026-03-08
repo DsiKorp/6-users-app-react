@@ -1,12 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
-import { loginAction } from "../actions/login.action";
-import type { Credentials } from "../../interfaces/loginUser.interface";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { LoginResponse } from "../../interfaces/loginResponse.interface";
 
-export const useAuthQuery = ({ username, password }: Credentials) => {
-    return useQuery({
-        queryKey: ['auth'],
-        queryFn: () => loginAction({ username, password }),
-        retry: false,
-        staleTime: 1000 * 60 * 90, // 90 minutes
+export const AUTH_QUERY_KEY = ['auth'] as const;
+
+export const useAuthQuery = () => {
+    const queryClient = useQueryClient();
+
+    return useQuery<LoginResponse | null>({
+        queryKey: AUTH_QUERY_KEY,
+        queryFn: async () => queryClient.getQueryData<LoginResponse>(AUTH_QUERY_KEY) ?? null,
+        staleTime: Infinity,
+        gcTime: 1000 * 60 * 90, // 90 minutes
     });
-}
+};

@@ -1,8 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import type { Credentials } from "../../interfaces/loginUser.interface";
 import { useSwal } from "../../hooks/useSwal";
 import { AuthContext } from "../context/AuthContext";
-import { getGreetingAction } from "../../actions/get-initial-greeting.action";
 import { useQueryInitialGreeting } from "../../hooks/useQueryInitialGreeting";
 
 // interface Props {

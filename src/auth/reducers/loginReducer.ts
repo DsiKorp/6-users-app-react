@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import type { AuthState, LoggedUser } from "../../interfaces/loginUser.interface";
+import type { AuthState } from "../../interfaces/loginUser.interface";
 
 export type AuthAction =
     | { type: 'LOGIN'; payload: AuthState }
