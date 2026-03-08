@@ -8,7 +8,7 @@ import { AuthContext } from "../auth/context/AuthContext";
 
 export const UserRoutes = () => {
 
-  const { authStatus } = use(AuthContext);
+  const { authStatus, login } = use(AuthContext);
 
   if (authStatus === 'checking') return (
     <div className="min-vh-100 d-flex align-items-center justify-content-center bg-body-tertiary">
@@ -28,8 +28,14 @@ export const UserRoutes = () => {
         <Navbar />
         <Routes>
           <Route path="users" element={<UsersPage />} />
-          <Route path="users/register" element={<RegisterPage />} />
-          <Route path="users/edit/:id" element={<RegisterPage />} />
+          <Route
+            path="users/register"
+            element={login.isAdmin ? <RegisterPage /> : <Navigate to="/users" replace />}
+          />
+          <Route
+            path="users/edit/:id"
+            element={login.isAdmin ? <RegisterPage /> : <Navigate to="/users" replace />}
+          />
           <Route path="/" element={<Navigate to="/users" />} />
         </Routes>
       </UserContextProvider>

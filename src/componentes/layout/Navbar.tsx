@@ -34,15 +34,20 @@ export const Navbar = () => {
                                 Usuarios
                             </NavLink>
                         </li>
-                        <li className="nav-item">
-                            <NavLink
-                                className={({ isActive }) => `nav-link-modern ${isActive ? 'active' : ''}`}
-                                to="/users/register"
-                            >
-                                <i className="fa-solid fa-user-plus me-1"></i>
-                                Registrar
-                            </NavLink>
-                        </li>
+                        {
+                            login.isAdmin && (
+                                <li className="nav-item">
+                                    <NavLink
+                                        className={({ isActive }) => `nav-link-modern ${isActive ? 'active' : ''}`}
+                                        to="/users/register"
+                                    >
+                                        <i className="fa-solid fa-user-plus me-1"></i>
+                                        Registrar
+                                    </NavLink>
+                                </li>
+                            )
+                        }
+
                     </ul>
                 </div>
 

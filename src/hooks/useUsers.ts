@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { use, useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -11,6 +11,7 @@ import { useUsersQuery } from "../auth/hooks/useUsersQuery";
 import { saveUserAction } from "../auth/actions/save-user.action";
 import { updateUserAction } from "../auth/actions/update-user.action";
 import { deleteUserAction } from "../auth/actions/delete-user.action";
+import { AuthContext } from "../auth/context/AuthContext";
 
 const initialErrors = {
     username: '',
@@ -63,12 +64,14 @@ export const useUsers = () => {
 
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const { login } = use(AuthContext);
     const { data: queriedUsers, isLoading } = useUsersQuery();
     const [users, dispatch] = useReducer(usersReducer, []);
     const [userSelected, setUserSelected] = useState<User>({} as User);
     const { fireSwal, fireSwalUserAction } = useSwal();
     const [isVisibleForm, setIsVisibleForm] = useState(false);
     const [errors, setErrors] = useState(initialErrors);
+
 
     const syncUsersCache = (updater: (currentUsers: User[]) => User[]) => {
         queryClient.setQueryData<User[]>(['users'], (currentUsers = []) => updater(currentUsers));
@@ -87,6 +90,15 @@ export const useUsers = () => {
         setErrors(initialErrors);
 
         try {
+            if (!login.isAdmin) {
+                fireSwal({
+                    title: 'Acceso denegado',
+                    text: 'No tienes permisos para realizar esta acción.',
+                    icon: 'error'
+                });
+                return false;
+            }
+
             const isNewUser = !user.id;
             let userDb: User;
 
@@ -152,6 +164,17 @@ export const useUsers = () => {
     }
 
     const handleRemoveUser = (id: number) => {
+        if (!login.isAdmin) {
+            fireSwal({
+                title: 'Acceso Denegado!',
+                html: 'No tienes privilegios para <strong>eliminar</strong> usuarios!',
+                footer: 'Operacion completada.',
+                icon: 'error'
+            });
+            return;
+        }
+
+        console.log('fallo privilegios');
 
         fireSwalUserAction({
             title: 'Esta seguro que desea eliminar?',
