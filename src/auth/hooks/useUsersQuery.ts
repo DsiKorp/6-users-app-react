@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllUsersAction } from "../actions/get-all-users.action";
 
-export const useQueryUsers = () => {
+export const useUsersQuery = () => {
     return useQuery({
         queryKey: ['users'],
         queryFn: () => getAllUsersAction(),

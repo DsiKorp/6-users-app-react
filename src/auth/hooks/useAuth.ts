@@ -5,6 +5,9 @@ import { useSwal } from "../../hooks/useSwal";
 import { loginUser } from "../services/authService";
 import type { Credentials, LoggedUser } from "../../interfaces/loginUser.interface";
 import { loginReducer, getLoginInitialState } from "../reducers/loginReducer";
+import { loginAction } from "../actions/login.action";
+import type { LoginResponse } from "../../interfaces/loginResponse.interface";
+//import { useAuthQuery } from "./useAuthQuery";
 
 
 export type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
@@ -12,6 +15,7 @@ export type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 export const useAuth = () => {
     const navigate = useNavigate();
     const { fireSwal } = useSwal();
+    //const { data: queriedAuth, isLoading } = useAuthQuery();
 
     const getInitialAuthStatus = (isAuth: boolean): AuthStatus => {
         if (isAuth) {
@@ -24,44 +28,75 @@ export const useAuth = () => {
     const [login, dispatch] = useReducer(loginReducer, getLoginInitialState());
     const [authStatus, setAuthStatus] = useState<AuthStatus>(getInitialAuthStatus(login.isAuth));
 
-    const handlerLogin = (userCredentials: Credentials) => {
-        const isLogin = loginUser(userCredentials);
+    const handlerLogin = async (userCredentials: Credentials) => {
+        //const isLogin = loginUser(userCredentials);
 
-        if (isLogin) {
-            const loggedUser: LoggedUser = { username: userCredentials.username };
+        try {
+            const loginResponse: LoginResponse = await loginAction(userCredentials);
+            console.log({ loginResponse });
+
+            const token = loginResponse.token;
+            const claims = token.split('.')[1];
+            const decodedClaims = JSON.parse(atob(claims));
+            console.log(decodedClaims);
+
+            const loggedUser: LoggedUser = { username: decodedClaims.username };
+
             dispatch({
                 type: 'LOGIN',
-                payload: loggedUser,
+                payload: {
+                    loggedUser,
+                    isAdmin: decodedClaims.isAdmin,
+                    isAuth: true,
+                },
             });
-            sessionStorage.setItem('loggedUser', JSON.stringify({
+
+            sessionStorage.setItem('authState', JSON.stringify({
                 isAuth: true,
+                isAdmin: decodedClaims.isAdmin,
                 loggedUser,
             }));
+
+            sessionStorage.setItem('token', token);
+
             setAuthStatus('authenticated');
             navigate('/users');
-        } else {
+        } catch (error) {
             setAuthStatus('not-authenticated');
-            fireSwal({
-                title: 'Error Login',
-                html: 'Username o password  <strong>invalidos</strong>',
-                icon: 'error'
-            });
+
+            if (error instanceof Error && 'response' in error && (error as any).response?.status === 401) {
+                fireSwal({
+                    title: 'Error Login',
+                    html: 'Username o password  <strong>invalidos</strong>',
+                    icon: 'error'
+                });
+            } else if (error instanceof Error && 'response' in error && (error as any).response?.status === 403) {
+                fireSwal({
+                    title: 'Error Login',
+                    html: 'No tienes acceso al <strong>recurso o permisos</strong>',
+                    icon: 'error'
+                });
+            } else {
+                throw error;
+            }
         }
-    }
+    };
 
     const handlerLogout = () => {
         dispatch({
             type: 'LOGOUT',
         });
-        sessionStorage.removeItem('loggedUser');
+        sessionStorage.removeItem('authState');
+        sessionStorage.removeItem('token');
+        sessionStorage.clear();
         setAuthStatus('not-authenticated');
         navigate('/login');
-    }
+    };
 
     return {
         login,
         authStatus,
         handlerLogin,
         handlerLogout,
-    }
-}
+    };
+};

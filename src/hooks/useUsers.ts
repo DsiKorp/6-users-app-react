@@ -7,7 +7,7 @@ import type { User } from "../interfaces/users.interfaces";
 import { usersReducer } from "../reducers/usersReducer";
 import { useNavigate } from "react-router-dom";
 //import { initialUsers } from '../mock-data/users.mock';
-import { useQueryUsers } from "../auth/hooks/useQueryUsers";
+import { useUsersQuery } from "../auth/hooks/useUsersQuery";
 import { saveUserAction } from "../auth/actions/save-user.action";
 import { updateUserAction } from "../auth/actions/update-user.action";
 import { deleteUserAction } from "../auth/actions/delete-user.action";
@@ -63,7 +63,7 @@ export const useUsers = () => {
 
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { data: queriedUsers } = useQueryUsers();
+    const { data: queriedUsers, isLoading } = useUsersQuery();
     const [users, dispatch] = useReducer(usersReducer, []);
     const [userSelected, setUserSelected] = useState<User>({} as User);
     const { fireSwal, fireSwalUserAction } = useSwal();
@@ -204,6 +204,7 @@ export const useUsers = () => {
     return {
         // Properties
         errors,
+        isLoading,
         isVisibleForm,
         users,
         userSelected,
