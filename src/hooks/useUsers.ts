@@ -64,7 +64,7 @@ export const useUsers = () => {
 
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { login } = use(AuthContext);
+    const { handlerLogout, isTokenAdmin } = use(AuthContext);
     const { data: queriedUsers, isLoading } = useUsersQuery();
     const [users, dispatch] = useReducer(usersReducer, []);
     const [userSelected, setUserSelected] = useState<User>({} as User);
@@ -86,20 +86,27 @@ export const useUsers = () => {
         });
     }, [queriedUsers]);
 
+
+
+
     const handleAddUser = async (user: User): Promise<boolean> => {
         setErrors(initialErrors);
 
         try {
-            if (!login.isAdmin) {
+            const isNewUser = !user.id;
+
+            if (!isTokenAdmin()) {
                 fireSwal({
-                    title: 'Acceso denegado',
-                    text: 'No tienes permisos para realizar esta acción.',
+                    title: 'Acceso Denegado!',
+                    html: `No tienes privilegios para <strong> ${isNewUser ? 'crear' : 'actualizar'}</strong> usuarios!`,
+                    footer: 'Operacion No completada.',
                     icon: 'error'
                 });
+
+                handlerLogout();
                 return false;
             }
 
-            const isNewUser = !user.id;
             let userDb: User;
 
             if (isNewUser) {
@@ -164,11 +171,11 @@ export const useUsers = () => {
     }
 
     const handleRemoveUser = (id: number) => {
-        if (!login.isAdmin) {
+        if (!isTokenAdmin()) {
             fireSwal({
                 title: 'Acceso Denegado!',
                 html: 'No tienes privilegios para <strong>eliminar</strong> usuarios!',
-                footer: 'Operacion completada.',
+                footer: 'Operacion no completada.',
                 icon: 'error'
             });
             return;

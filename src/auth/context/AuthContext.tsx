@@ -15,13 +15,14 @@ interface AuthContextProps {
     // methods
     handlerLogin: (credentials: { username: string; password: string }) => void;
     handlerLogout: () => void;
+    isTokenAdmin: () => boolean;
 }
 
 export const AuthContext = createContext({} as AuthContextProps);
 
 export const AuthContextProvider = ({ children }: PropsWithChildren) => {
 
-    const { authStatus, login, handlerLogin, handlerLogout } = useAuth();
+    const { authStatus, login, handlerLogin, handlerLogout, isTokenAdmin } = useAuth();
 
     return (
         <AuthContext value={{
@@ -30,6 +31,7 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
             login,
             handlerLogin,
             handlerLogout,
+            isTokenAdmin,
         }}>
             {children}
         </AuthContext>

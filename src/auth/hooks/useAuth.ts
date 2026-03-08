@@ -105,10 +105,26 @@ export const useAuth = () => {
         navigate('/login');
     };
 
+    const isTokenAdmin = (): boolean => {
+        const token = sessionStorage.getItem('token');
+        if (!token) return false;
+
+        try {
+            const claims = token.split('.');
+            if (claims.length !== 3) return false;
+
+            const decoded = JSON.parse(atob(claims[1]));
+            return decoded.isAdmin === true;
+        } catch {
+            return false;
+        }
+    };
+
     return {
         login,
         authStatus,
         handlerLogin,
         handlerLogout,
+        isTokenAdmin,
     };
 };
