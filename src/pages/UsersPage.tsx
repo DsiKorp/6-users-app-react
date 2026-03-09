@@ -8,7 +8,7 @@ import { AuthContext } from "../auth/context/AuthContext";
 export const UsersPage = () => {
 
     const { users, isVisibleForm, handleOpenForm } = useContext(UserContext);
-    const { login } = useContext(AuthContext)
+    const { isTokenAdmin } = useContext(AuthContext)
 
     const hasUsers = (users?.length ?? 0) > 0;
 
@@ -25,7 +25,7 @@ export const UsersPage = () => {
                 <div className="row">
                     <div className="col">
                         {
-                            login.isAdmin && (
+                            isTokenAdmin() && (
                                 <button
                                     className="btn btn-secondary mb-3"
                                     onClick={handleOpenForm}

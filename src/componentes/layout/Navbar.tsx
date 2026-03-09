@@ -9,7 +9,7 @@ import { useContext } from "react";
 
 export const Navbar = () => {
 
-    const { login, handlerLogout } = useContext(AuthContext);
+    const { isTokenAdmin, handlerLogout } = useContext(AuthContext);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-modern">
@@ -35,7 +35,7 @@ export const Navbar = () => {
                             </NavLink>
                         </li>
                         {
-                            login.isAdmin && (
+                            isTokenAdmin() && (
                                 <li className="nav-item">
                                     <NavLink
                                         className={({ isActive }) => `nav-link-modern ${isActive ? 'active' : ''}`}
@@ -54,7 +54,7 @@ export const Navbar = () => {
                 <div className="collapse navbar-collapse justify-content-end" id="navbarNavLogout">
                     <span className="username-badge">
                         <i className="fa-solid fa-user me-1"></i>
-                        {login.loggedUser?.username}
+                        {isTokenAdmin() ? "Admin" : "User"}
                     </span>
                     <button
                         onClick={handlerLogout}
