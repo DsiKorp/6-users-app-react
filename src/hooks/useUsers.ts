@@ -65,7 +65,7 @@ export const useUsers = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { handlerLogout, isTokenAdmin } = use(AuthContext);
-    const { data: queriedUsers, isLoading } = useUsersQuery();
+    const { data: usersDb, isLoading } = useUsersQuery();
     const [users, dispatch] = useReducer(usersReducer, []);
     const [userSelected, setUserSelected] = useState<User>({} as User);
     const { fireSwal, fireSwalUserAction } = useSwal();
@@ -78,13 +78,13 @@ export const useUsers = () => {
     };
 
     useEffect(() => {
-        if (!queriedUsers) return;
+        if (!usersDb) return;
 
         dispatch({
             type: 'SET_USERS',
-            payload: queriedUsers,
+            payload: usersDb,
         });
-    }, [queriedUsers]);
+    }, [usersDb]);
 
 
 

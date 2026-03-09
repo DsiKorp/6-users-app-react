@@ -1,7 +1,8 @@
 import { NavLink } from "react-router";
+import { use, useContext } from "react";
+
 import type { User } from "../interfaces/users.interfaces"
 import { UserContext } from "../context/UserContext";
-import { useContext } from "react";
 import { AuthContext } from "../auth/context/AuthContext";
 
 interface Props {
@@ -11,7 +12,7 @@ interface Props {
 export const UserRow = ({ user: { id, username, email, admin } }: Props) => {
     //onRemoveUser={} onUpdateUser={}
     const { handleRemoveUser, handlereSelectedUser } = useContext(UserContext);
-    const { isTokenAdmin } = useContext(AuthContext);
+    const { isTokenAdmin } = use(AuthContext);
 
     // console.log('id: ', id);
     // console.log('username: ', username);

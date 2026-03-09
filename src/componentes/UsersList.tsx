@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, use } from "react";
 import { UserContext } from "../context/UserContext";
 import { UserRow } from "./UserRow";
 import { AuthContext } from "../auth/context/AuthContext";
@@ -6,7 +6,8 @@ import { AuthContext } from "../auth/context/AuthContext";
 export const UsersList = () => {
 
     const { users } = useContext(UserContext);
-    const { login } = useContext(AuthContext);
+    const { isTokenAdmin } = use(AuthContext);
+
     console.log('********************************')
     console.log({ users });
 
@@ -21,7 +22,7 @@ export const UsersList = () => {
                         <th>Usuario</th>
                         <th>Email</th>
                         {
-                            login.isAdmin && (
+                            isTokenAdmin() && (
                                 <>
                                     <th>Update</th>
                                     <th>Update Page</th>
