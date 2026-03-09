@@ -13,7 +13,7 @@ export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
     const { handleAddUser, errors } = useContext(UserContext);
 
     const [userForm, setUserForm] = useState(userSelected || {} as User);
-    const { id, username, email, password } = userForm;
+    const { id, username, email, password, admin } = userForm;
 
     const isAddingMode: boolean = (id === 0 || !id);
 
@@ -100,6 +100,17 @@ export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
                     />
                     <p className="text-danger">{errors?.email}</p>
                 </div>
+            </div>
+
+            <div className="my-3 form-check">
+                <input
+                    type="checkbox"
+                    name="admin"
+                    className="form-check-input"
+                    checked={admin}
+                    onChange={(e) => setUserForm({ ...userForm, admin: e.target.checked })}
+                />
+                <label className="form-check-label">Administrador</label>
             </div>
 
             {

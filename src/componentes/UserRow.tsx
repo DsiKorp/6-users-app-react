@@ -8,10 +8,10 @@ interface Props {
     user: User;
 }
 
-export const UserRow = ({ user: { id, username, email } }: Props) => {
+export const UserRow = ({ user: { id, username, email, admin } }: Props) => {
     //onRemoveUser={} onUpdateUser={}
     const { handleRemoveUser, handlereSelectedUser } = useContext(UserContext);
-    const { login } = useContext(AuthContext);
+    const { isTokenAdmin } = useContext(AuthContext);
 
     // console.log('id: ', id);
     // console.log('username: ', username);
@@ -24,11 +24,11 @@ export const UserRow = ({ user: { id, username, email } }: Props) => {
                 <td>{username}</td>
                 <td>{email}</td>
                 {
-                    login.isAdmin && (
+                    isTokenAdmin() && (
                         <>
                             <td>
                                 <button
-                                    onClick={() => handlereSelectedUser({ id, username, email })}
+                                    onClick={() => handlereSelectedUser({ id, username, email, admin })}
                                     type="button"
                                     className="btn btn-outline-primary btn-sm">
                                     Update

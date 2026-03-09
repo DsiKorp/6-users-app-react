@@ -150,6 +150,11 @@ export const useUsers = () => {
             return true;
         } catch (error) {
             if (axios.isAxiosError<ValidationErrorResponse>(error)) {
+                if (error.response?.status === 401) {
+                    handlerLogout();
+                    return false;
+                }
+
                 const mappedErrors = getMappedValidationErrors(error.response?.data);
                 const hasFieldErrors = Object.values(mappedErrors).some(Boolean);
 
@@ -181,8 +186,6 @@ export const useUsers = () => {
             return;
         }
 
-        console.log('fallo privilegios');
-
         fireSwalUserAction({
             title: 'Esta seguro que desea eliminar?',
             html: "Cuidado el usuario sera <strong>eliminado</strong>!",
@@ -194,22 +197,49 @@ export const useUsers = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
 
-                await deleteUserAction(id);
+                try {
+                    await deleteUserAction(id);
 
-                dispatch({
-                    type: 'REMOVE_USER',
-                    payload: id,
-                });
+                    dispatch({
+                        type: 'REMOVE_USER',
+                        payload: id,
+                    });
 
-                syncUsersCache((currentUsers) => currentUsers.filter((user) => user.id !== id));
-                void queryClient.invalidateQueries({ queryKey: ['users'] });
+                    syncUsersCache((currentUsers) => currentUsers.filter((user) => user.id !== id));
+                    void queryClient.invalidateQueries({ queryKey: ['users'] });
 
-                fireSwal({
-                    title: 'Usuario Eliminado!',
-                    html: 'El usuario ha sido <strong>eliminado</strong> con exito!',
-                    footer: 'Operacion completada.',
-                    icon: 'success'
-                });
+                    fireSwal({
+                        title: 'Usuario Eliminado!',
+                        html: 'El usuario ha sido <strong>eliminado</strong> con exito!',
+                        footer: 'Operacion completada.',
+                        icon: 'success'
+                    });
+                } catch (error) {
+                    if (axios.isAxiosError<ValidationErrorResponse>(error)) {
+                        if (error.response?.status === 401) {
+                            handlerLogout();
+                            return false;
+                        }
+
+                        const mappedErrors = getMappedValidationErrors(error.response?.data);
+                        const hasFieldErrors = Object.values(mappedErrors).some(Boolean);
+
+                        if (hasFieldErrors) {
+                            setErrors(mappedErrors);
+                            return false;
+                        }
+                    }
+
+                    fireSwal({
+                        title: 'Error',
+                        text: 'No se pudo eliminar el usuario. Intenta nuevamente.',
+                        icon: 'error'
+                    });
+
+                    return false;
+
+
+                }
             }
         })
     }
