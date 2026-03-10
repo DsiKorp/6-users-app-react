@@ -1,6 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { User } from "../interfaces/users.interfaces";
-import { UserContext } from "../context/UserContext";
+//import { UserContext } from "../context/UserContext";
+import { useUsers } from "../hooks/useUsers";
 
 interface Props {
     userSelected?: User;
@@ -10,7 +11,8 @@ interface Props {
 
 export const UserForm = ({ userSelected, handleCloseForm }: Props) => {
 
-    const { handleAddUser, errors } = useContext(UserContext);
+    //const { handleAddUser, errors } = useContext(UserContext);
+    const { handleAddUser, errors } = useUsers();
 
     const [userForm, setUserForm] = useState(userSelected || {} as User);
     const { id, username, email, password, admin } = userForm;

@@ -1,24 +1,27 @@
-import { useContext, useState } from "react";
+//import { useContext, useState } from "react";
 import type { Credentials } from "../../interfaces/loginUser.interface";
 import { useSwal } from "../../hooks/useSwal";
-import { AuthContext } from "../context/AuthContext";
+//import { AuthContext } from "../context/AuthContext";
 import { useQueryInitialGreeting } from "../../hooks/useQueryInitialGreeting";
+import { useAuth } from "../hooks/useAuth";
+import { useState } from "react";
 
 // interface Props {
 //     handlerLogin: (credentials: Credentials) => void;
 // }
 
-const initialLoginForm: Credentials = {
-    username: '',
-    password: '',
-}
+// const initialLoginForm: Credentials = {
+//     username: '',
+//     password: '',
+// }
 
 export const LoginPage = () => {
 
-    const { handlerLogin } = useContext(AuthContext);
+    //const { handlerLogin } = useContext(AuthContext);
+    const { handlerLogin } = useAuth();
     const { data: initialGreeting } = useQueryInitialGreeting();
     const { fireSwal } = useSwal();
-    const [loginForm, setLoginForm] = useState(initialLoginForm);
+    const [loginForm, setLoginForm] = useState({} as Credentials);
     const { username, password } = loginForm;
 
     const onInputChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +44,7 @@ export const LoginPage = () => {
 
         // aca implementamos el login
         handlerLogin({ username, password });
-        setLoginForm(initialLoginForm);
+        setLoginForm({} as Credentials);
     }
 
     return (

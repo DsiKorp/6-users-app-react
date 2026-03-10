@@ -1,12 +1,16 @@
-import { useContext, use } from "react";
-import { UserContext } from "../context/UserContext";
+//import { use } from "react";
+//import { UserContext } from "../context/UserContext";
 import { UserRow } from "./UserRow";
-import { AuthContext } from "../auth/context/AuthContext";
+//import { AuthContext } from "../auth/context/AuthContext";
+import { useUsers } from "../hooks/useUsers";
+import { useAuth } from "../auth/hooks/useAuth";
 
 export const UsersList = () => {
 
-    const { users } = useContext(UserContext);
-    const { isTokenAdmin } = use(AuthContext);
+    //const { users } = useContext(UserContext);
+    const { users } = useUsers();
+    //const { isTokenAdmin } = use(AuthContext);
+    const { isTokenAdmin } = useAuth();
 
     console.log('********************************')
     console.log({ users });

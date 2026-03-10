@@ -11,6 +11,7 @@ export interface LoggedUser {
 
 export interface AuthState {
     isAuth: boolean;
-    isAdmin?: boolean;
+    isAdmin?: boolean | false;
     loggedUser: LoggedUser | null;
+    //isTokenAdmin: boolean | false;
 }

@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
-import { AuthContext } from "../../auth/context/AuthContext";
-import { useContext } from "react";
+import { useAuth } from "../../auth/hooks/useAuth";
+//import { AuthContext } from "../../auth/context/AuthContext";
+//import { useContext } from "react";
 
 // interface Props {
 //     login: AuthState;
@@ -9,7 +10,9 @@ import { useContext } from "react";
 
 export const Navbar = () => {
 
-    const { isTokenAdmin, handlerLogout } = useContext(AuthContext);
+    //const { isTokenAdmin, handlerLogout } = useContext(AuthContext);
+    const { isTokenAdmin, handlerLogout } = useAuth();
+
 
     return (
         <nav className="navbar navbar-expand-lg navbar-modern">

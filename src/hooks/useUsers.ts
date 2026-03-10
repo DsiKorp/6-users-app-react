@@ -1,76 +1,51 @@
-import { use, useEffect, useReducer, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import axios from "axios";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useSwal } from "./useSwal";
 import type { User } from "../interfaces/users.interfaces";
-import { usersReducer } from "../reducers/usersReducer";
+//import { usersReducer } from "../reducers/usersReducer";
+import {
+    getMappedValidationErrors,
+    onSetUsers,
+    onAddUser,
+    onRemoveUser,
+    onUpdateUser,
+    onUserSelectedForm,
+    onSetUserErrors,
+    onClearUserErrors,
+    type UsersState,
+    type ValidationErrorResponse,
+} from "../store/slices/users/usersSlice";
 import { useNavigate } from "react-router-dom";
 //import { initialUsers } from '../mock-data/users.mock';
 import { useUsersQuery } from "../auth/hooks/useUsersQuery";
 import { saveUserAction } from "../auth/actions/save-user.action";
 import { updateUserAction } from "../auth/actions/update-user.action";
 import { deleteUserAction } from "../auth/actions/delete-user.action";
-import { AuthContext } from "../auth/context/AuthContext";
-
-const initialErrors = {
-    username: '',
-    email: '',
-    password: '',
-}
-
-type UserFormErrors = typeof initialErrors;
-
-interface ValidationErrorItem {
-    field: string;
-    message: string;
-}
-
-interface ValidationErrorResponse {
-    type: string;
-    message: string;
-    errors?: ValidationErrorItem[];
-}
-
-const getMappedValidationErrors = (validationError?: ValidationErrorResponse): UserFormErrors => {
-    const mappedErrors: UserFormErrors = { ...initialErrors };
-
-    if (!validationError) return mappedErrors;
-
-    if (validationError.errors?.length) {
-        return validationError.errors.reduce<UserFormErrors>((acc, currentError) => {
-            if (currentError.field === 'username' || currentError.field === 'email' || currentError.field === 'password') {
-                acc[currentError.field] = currentError.message;
-            }
-
-            return acc;
-        }, mappedErrors);
-    }
-
-    if (validationError.type === 'email-already-exists') {
-        mappedErrors.email = validationError.message;
-        return mappedErrors;
-    }
-
-    if (validationError.type === 'user-already-exists') {
-        mappedErrors.username = validationError.message;
-        return mappedErrors;
-    }
-
-    return mappedErrors;
-};
+//import { AuthContext } from "../auth/context/AuthContext";
+import { onCloseModal, onOpenModal } from "../store/slices/ui/uiSlice";
+import { useAuth } from "../auth/hooks/useAuth";
 
 export const useUsers = () => {
 
     const navigate = useNavigate();
+    //const [users, dispatch] = useReducer(usersReducer, []);
+    // REDUX
+    const { users, userSelected, errors } = useSelector((state: { users: UsersState }) => state.users);
+    const { isVisibleForm } = useSelector((state: { ui: { isVisibleForm: boolean } }) => state.ui);
+    const dispatch = useDispatch();
+
     const queryClient = useQueryClient();
-    const { handlerLogout, isTokenAdmin } = use(AuthContext);
+    //const { handlerLogout, isTokenAdmin } = use(AuthContext);
+    const { handlerLogout, isTokenAdmin } = useAuth();
     const { data: usersDb, isLoading } = useUsersQuery();
-    const [users, dispatch] = useReducer(usersReducer, []);
-    const [userSelected, setUserSelected] = useState<User>({} as User);
+
+    //const [userSelected, setUserSelected] = useState<User>({} as User);
     const { fireSwal, fireSwalUserAction } = useSwal();
-    const [isVisibleForm, setIsVisibleForm] = useState(false);
-    const [errors, setErrors] = useState(initialErrors);
+    //const [isVisibleForm, setIsVisibleForm] = useState(false);
 
 
     const syncUsersCache = (updater: (currentUsers: User[]) => User[]) => {
@@ -79,18 +54,19 @@ export const useUsers = () => {
 
     useEffect(() => {
         if (!usersDb) return;
+        dispatch(onSetUsers([...usersDb]));
 
-        dispatch({
-            type: 'SET_USERS',
-            payload: usersDb,
-        });
-    }, [usersDb]);
+        // dispatch({
+        //     type: 'SET_USERS',
+        //     payload: usersDb,
+        // });
+    }, [dispatch, usersDb]);
 
 
 
 
     const handleAddUser = async (user: User): Promise<boolean> => {
-        setErrors(initialErrors);
+        dispatch(onClearUserErrors());
 
         try {
             const isNewUser = !user.id;
@@ -111,6 +87,7 @@ export const useUsers = () => {
 
             if (isNewUser) {
                 userDb = await saveUserAction(user);
+                dispatch(onAddUser({ ...userDb }));
             } else {
                 const currentUser = users.find((stateUser) => stateUser.id === user.id);
                 const userToUpdate = {
@@ -118,12 +95,13 @@ export const useUsers = () => {
                     password: user.password || currentUser?.password,
                 };
                 userDb = await updateUserAction(userToUpdate);
+                dispatch(onUpdateUser({ ...userDb }));
             }
 
-            dispatch({
-                type: isNewUser ? 'ADD_USER' : 'UPDATE_USER',
-                payload: userDb
-            });
+            // dispatch({
+            //     type: isNewUser ? 'ADD_USER' : 'UPDATE_USER',
+            //     payload: userDb
+            // });
 
             syncUsersCache((currentUsers) => {
                 if (isNewUser) {
@@ -159,7 +137,7 @@ export const useUsers = () => {
                 const hasFieldErrors = Object.values(mappedErrors).some(Boolean);
 
                 if (hasFieldErrors) {
-                    setErrors(mappedErrors);
+                    dispatch(onSetUserErrors(mappedErrors));
                     return false;
                 }
             }
@@ -199,11 +177,11 @@ export const useUsers = () => {
 
                 try {
                     await deleteUserAction(id);
-
-                    dispatch({
-                        type: 'REMOVE_USER',
-                        payload: id,
-                    });
+                    dispatch(onRemoveUser(id));
+                    // dispatch({
+                    //     type: 'REMOVE_USER',
+                    //     payload: id,
+                    // });
 
                     syncUsersCache((currentUsers) => currentUsers.filter((user) => user.id !== id));
                     void queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -225,7 +203,7 @@ export const useUsers = () => {
                         const hasFieldErrors = Object.values(mappedErrors).some(Boolean);
 
                         if (hasFieldErrors) {
-                            setErrors(mappedErrors);
+                            dispatch(onSetUserErrors(mappedErrors));
                             return false;
                         }
                     }
@@ -246,19 +224,24 @@ export const useUsers = () => {
 
     const handlereSelectedUser = (user: User) => {
         console.log({ user });
-        setUserSelected({ ...user });
-        setIsVisibleForm(true);
+        //setUserSelected({ ...user });
+        dispatch(onUserSelectedForm({ ...user }));
+        //setIsVisibleForm(true);
+        dispatch(onOpenModal());
     }
 
     const handleOpenForm = () => {
-        setErrors(initialErrors);
-        setIsVisibleForm(true);
+        dispatch(onClearUserErrors());
+        //setIsVisibleForm(true);
+        dispatch(onOpenModal());
     }
 
     const handleCloseForm = () => {
-        setErrors(initialErrors);
-        setIsVisibleForm(false);
-        setUserSelected({} as User);
+        dispatch(onClearUserErrors());
+        //setIsVisibleForm(false);
+        dispatch(onCloseModal());
+        //setUserSelected({} as User);        
+        dispatch(onUserSelectedForm({} as User));
     }
 
     return {

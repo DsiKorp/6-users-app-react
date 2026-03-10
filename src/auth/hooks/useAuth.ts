@@ -1,18 +1,21 @@
-import { useReducer, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
 
 import { useSwal } from "../../hooks/useSwal";
-import type { Credentials, LoggedUser } from "../../interfaces/loginUser.interface";
-import { loginReducer, getLoginInitialState } from "../reducers/loginReducer";
+import type { AuthState, Credentials, LoggedUser } from "../../interfaces/loginUser.interface";
+//import { loginReducer, getLoginInitialState } from "../reducers/loginReducer";
 import { loginAction } from "../actions/login.action";
 import { AUTH_QUERY_KEY } from "./useAuthQuery";
+import { onLogin, onLogout } from "../../store/auth/authSlice";
 
 
 export type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 
 export const useAuth = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const { fireSwal } = useSwal();
 
@@ -31,8 +34,9 @@ export const useAuth = () => {
         }
     };
 
-    const [login, dispatch] = useReducer(loginReducer, getLoginInitialState());
-    const [authStatus, setAuthStatus] = useState<AuthStatus>(getInitialAuthStatus(login.isAuth));
+    //const [login, dispatch] = useReducer(loginReducer, getLoginInitialState());
+    const { loggedUser, isAdmin, isAuth } = useSelector((state: { auth: AuthState }) => state.auth);
+    const [authStatus, setAuthStatus] = useState<AuthStatus>(getInitialAuthStatus(isAuth));
 
     const handlerLogin = async (userCredentials: Credentials) => {
         //const isLogin = loginUser(userCredentials);
@@ -49,14 +53,20 @@ export const useAuth = () => {
 
             const loggedUser: LoggedUser = { username: decodedClaims.username };
 
-            dispatch({
-                type: 'LOGIN',
-                payload: {
-                    loggedUser,
-                    isAdmin: decodedClaims.isAdmin,
-                    isAuth: true,
-                },
-            });
+            dispatch(onLogin({
+                loggedUser,
+                isAdmin: decodedClaims.isAdmin,
+                //isAuth: true,
+            }));
+
+            // dispatch({
+            //     type: 'LOGIN',
+            //     payload: {
+            //         loggedUser,
+            //         isAdmin: decodedClaims.isAdmin,
+            //         isAuth: true,
+            //     },
+            // });
 
             sessionStorage.setItem('authState', JSON.stringify({
                 isAuth: true,
@@ -90,9 +100,11 @@ export const useAuth = () => {
     };
 
     const handlerLogout = () => {
-        dispatch({
-            type: 'LOGOUT',
-        });
+        dispatch(onLogout());
+
+        // dispatch({
+        //     type: 'LOGOUT',
+        // });
 
         // Clean users cache on logout to avoid stale or unauthorized data.
         queryClient.removeQueries({ queryKey: ['users'] });
@@ -121,7 +133,13 @@ export const useAuth = () => {
     };
 
     return {
-        login,
+        //login,
+
+        login: {
+            loggedUser,
+            isAdmin,
+            isAuth
+        },
         authStatus,
         handlerLogin,
         handlerLogout,

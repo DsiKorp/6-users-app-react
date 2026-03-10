@@ -6,7 +6,7 @@ export type UsersAction =
     | { type: 'REMOVE_USER'; payload: number }
     | { type: 'UPDATE_USER'; payload: User };
 
-
+// logic similar to usersSlice
 export const usersReducer = (state: User[] = [], action: UsersAction): User[] => {
 
     switch (action.type) {

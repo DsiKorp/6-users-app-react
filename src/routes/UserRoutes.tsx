@@ -1,14 +1,16 @@
-import { use } from "react";
+//import { use } from "react";
 import { Navigate, Route, Routes } from "react-router-dom"
 import { UsersPage } from "../pages/UsersPage"
 import { Navbar } from "../componentes/layout/Navbar";
 import { RegisterPage } from "../pages/RegisterPage";
-import { UserContextProvider } from "../context/UserContext";
-import { AuthContext } from "../auth/context/AuthContext";
+// import { UserContextProvider } from "../context/UserContext";
+//import { AuthContext } from "../auth/context/AuthContext";
+import { useAuth } from "../auth/hooks/useAuth";
 
 export const UserRoutes = () => {
 
-  const { authStatus, isTokenAdmin } = use(AuthContext);
+  //const { authStatus, isTokenAdmin } = use(AuthContext);
+  const { authStatus, isTokenAdmin } = useAuth();
 
   if (authStatus === 'checking') return (
     <div className="min-vh-100 d-flex align-items-center justify-content-center bg-body-tertiary">
@@ -24,21 +26,21 @@ export const UserRoutes = () => {
 
   return (
     <>
-      <UserContextProvider>
-        <Navbar />
-        <Routes>
-          <Route path="users" element={<UsersPage />} />
-          <Route
-            path="users/register"
-            element={isTokenAdmin() ? <RegisterPage /> : <Navigate to="/users" replace />}
-          />
-          <Route
-            path="users/edit/:id"
-            element={isTokenAdmin() ? <RegisterPage /> : <Navigate to="/users" replace />}
-          />
-          <Route path="/" element={<Navigate to="/users" />} />
-        </Routes>
-      </UserContextProvider>
+      {/* <UserContextProvider> */}
+      <Navbar />
+      <Routes>
+        <Route path="users" element={<UsersPage />} />
+        <Route
+          path="users/register"
+          element={isTokenAdmin() ? <RegisterPage /> : <Navigate to="/users" replace />}
+        />
+        <Route
+          path="users/edit/:id"
+          element={isTokenAdmin() ? <RegisterPage /> : <Navigate to="/users" replace />}
+        />
+        <Route path="/" element={<Navigate to="/users" />} />
+      </Routes>
+      {/* </UserContextProvider> */}
     </>
   )
 }

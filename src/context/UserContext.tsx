@@ -1,6 +1,7 @@
 import { createContext, type PropsWithChildren } from "react";
 import { useUsers } from "../hooks/useUsers";
 import type { User } from "../interfaces/users.interfaces";
+import type { UserFormErrors } from "../store/slices/users/usersSlice";
 
 // PropsWithChildren es un tipo genérico que incluye children y remplaza esta interfaz
 // interface UserContextProps {
@@ -9,7 +10,8 @@ import type { User } from "../interfaces/users.interfaces";
 
 interface UserContextProps {
     // state
-    errors: Record<string, string>;
+    //errors: Record<string, string>;
+    errors: UserFormErrors;
     users: User[];
     userSelected: User | null;
     isVisibleForm: boolean;
