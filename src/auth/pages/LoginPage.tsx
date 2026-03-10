@@ -10,10 +10,10 @@ import { useState } from "react";
 //     handlerLogin: (credentials: Credentials) => void;
 // }
 
-// const initialLoginForm: Credentials = {
-//     username: '',
-//     password: '',
-// }
+const initialLoginForm: Credentials = {
+    username: '',
+    password: '',
+}
 
 export const LoginPage = () => {
 
@@ -21,7 +21,7 @@ export const LoginPage = () => {
     const { handlerLogin } = useAuth();
     const { data: initialGreeting } = useQueryInitialGreeting();
     const { fireSwal } = useSwal();
-    const [loginForm, setLoginForm] = useState({} as Credentials);
+    const [loginForm, setLoginForm] = useState(initialLoginForm);
     const { username, password } = loginForm;
 
     const onInputChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +44,7 @@ export const LoginPage = () => {
 
         // aca implementamos el login
         handlerLogin({ username, password });
-        setLoginForm({} as Credentials);
+        setLoginForm(initialLoginForm);
     }
 
     return (
