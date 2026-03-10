@@ -43,13 +43,13 @@ export const useAuth = () => {
 
         try {
             const loginResponse = await executeLogin(userCredentials);
-            console.log({ loginResponse });
+            //console.log({ loginResponse });
 
             const token = loginResponse.token;
             const claims = token.split('.')[1];
             const decodedClaims = JSON.parse(atob(claims));
-            console.log('-------------------------------------------------------');
-            console.log({ decodedClaims });
+            //console.log('-------------------------------------------------------');
+            //console.log({ decodedClaims });
 
             const loggedUser: LoggedUser = { username: decodedClaims.username };
 

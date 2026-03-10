@@ -12,8 +12,8 @@ export const UsersList = () => {
     //const { isTokenAdmin } = use(AuthContext);
     const { isTokenAdmin } = useAuth();
 
-    console.log('********************************')
-    console.log({ users });
+    //console.log('********************************')
+    //console.log({ users });
 
     return (
         <>

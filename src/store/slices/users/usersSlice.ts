@@ -60,12 +60,14 @@ export interface UsersState {
     users: User[];
     userSelected: User;
     errors: UserFormErrors;
+    isLoading: boolean;
 }
 
 const initialState: UsersState = {
     users: [],
     userSelected: {} as User,
     errors: { ...initialUserFormErrors },
+    isLoading: true,
 };
 
 // logic similar to usersReducer
@@ -75,6 +77,7 @@ export const usersSlice = createSlice({
     reducers: {
         onSetUsers: (state, { payload }: PayloadAction<User[]>) => {
             state.users = [...payload];
+            state.isLoading = false;
         },
         onAddUser: (state, { payload }: PayloadAction<User>) => {
             state.users = [

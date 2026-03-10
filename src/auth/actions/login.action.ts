@@ -6,7 +6,7 @@ export const loginAction = async ({ username, password }: Credentials): Promise<
     try {
         const { data } = await usersApi.post<LoginResponse>("/login", { username, password });
 
-        console.log(data);
+        //console.log(data);
         return data;
 
     } catch (error: any) {

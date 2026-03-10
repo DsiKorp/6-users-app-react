@@ -6,6 +6,7 @@ import { RegisterPage } from "../pages/RegisterPage";
 // import { UserContextProvider } from "../context/UserContext";
 //import { AuthContext } from "../auth/context/AuthContext";
 import { useAuth } from "../auth/hooks/useAuth";
+import { LoaderPage } from "../componentes/LoaderPage";
 
 export const UserRoutes = () => {
 
@@ -13,15 +14,7 @@ export const UserRoutes = () => {
   const { authStatus, isTokenAdmin } = useAuth();
 
   if (authStatus === 'checking') return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-body-tertiary">
-      <div className="card shadow-lg border-0 rounded-4 p-4 text-center" style={{ maxWidth: 420, width: '100%' }}>
-        <div className="card-body">
-          <div className="spinner-border text-primary mb-3" role="status" aria-hidden="true"></div>
-          <h5 className="fw-bold mb-2">Verificando sesión</h5>
-          <p className="text-secondary mb-0">Checking authentication...</p>
-        </div>
-      </div>
-    </div>
+    <LoaderPage title="Verificando sesión" message="Checking authentication..." />
   );
 
   return (

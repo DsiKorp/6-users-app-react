@@ -5,7 +5,7 @@ export const getAllUsersAction = async (): Promise<User[]> => {
     try {
         const { data } = await usersApi.get<User[]>("/users");
 
-        console.log(data);
+        //console.log(data);
         return [...data];
 
     } catch (error) {

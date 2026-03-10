@@ -5,15 +5,22 @@ import { UsersList } from "../componentes/UsersList";
 //import { AuthContext } from "../auth/context/AuthContext";
 import { useUsers } from "../hooks/useUsers";
 import { useAuth } from "../auth/hooks/useAuth";
+import { LoaderPage } from "../componentes/LoaderPage";
 
 export const UsersPage = () => {
 
     //const { users, isVisibleForm, handleOpenForm } = useContext(UserContext);
-    const { users, isVisibleForm, handleOpenForm } = useUsers();
+    const { users, isVisibleForm, handleOpenForm, isLoading } = useUsers();
     //const { isTokenAdmin } = useContext(AuthContext)
     const { isTokenAdmin } = useAuth();
 
     const hasUsers = (users?.length ?? 0) > 0;
+
+    if (isLoading) {
+        return (
+            <LoaderPage title="Cargando usuarios..." message="Por favor espere" />
+        );
+    }
 
     return (
         <>
