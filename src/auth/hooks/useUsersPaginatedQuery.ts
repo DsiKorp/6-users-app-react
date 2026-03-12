@@ -4,7 +4,7 @@ import type { PaginatedUsers } from "../../interfaces/PaginatedUsersI";
 
 export const USERS_PAGINATED_QUERY_KEY = 'users-paginated';
 
-export const useUsersPaginatedQuery = (page = 1) => {
+export const useUsersPaginatedQuery = (page = 0) => {
     return useQuery<PaginatedUsers>({
         queryKey: [USERS_PAGINATED_QUERY_KEY, page],
         queryFn: () => getAllUsersPaginatedAction(page),
