@@ -8,10 +8,11 @@ import { useUsers } from "../hooks/useUsers";
 import { useAuth } from "../auth/hooks/useAuth";
 
 interface Props {
+    rowNumber: number;
     user: User;
 }
 
-export const UserRow = ({ user: { id, username, email, admin } }: Props) => {
+export const UserRow = ({ rowNumber, user: { id, username, email, admin } }: Props) => {
     //onRemoveUser={} onUpdateUser={}
     //const { handleRemoveUser, handlereSelectedUser } = useContext(UserContext);
     const { handleRemoveUser, handlereSelectedUser } = useUsers();
@@ -25,6 +26,7 @@ export const UserRow = ({ user: { id, username, email, admin } }: Props) => {
     return (
         <>
             <tr key={id}>
+                <td>{rowNumber}</td>
                 <td>{id}</td>
                 <td>{username}</td>
                 <td>{email}</td>

@@ -19,7 +19,8 @@ import {
     type UsersState,
     type ValidationErrorResponse,
 } from "../store/slices/users/usersSlice";
-import { useNavigate } from "react-router-dom";
+
+import { useNavigate, useParams } from "react-router-dom";
 //import { initialUsers } from '../mock-data/users.mock';
 import { saveUserAction } from "../auth/actions/save-user.action";
 import { updateUserAction } from "../auth/actions/update-user.action";
@@ -45,8 +46,8 @@ export const useUsers = () => {
     //const { handlerLogout, isTokenAdmin } = use(AuthContext);
     const { handlerLogout, isTokenAdmin } = useAuth();
     //const { data: usersDb, isLoading } = useUsersQuery();
-    const currentPage = 0;
-    const { data: usersDbPaginated, isLoading } = useUsersPaginatedQuery(currentPage);
+    const { page } = useParams();
+    const { data: usersDbPaginated, isLoading } = useUsersPaginatedQuery(page ? parseInt(page) : 0);
 
     //const [userSelected, setUserSelected] = useState<User>({} as User);
     const { fireSwal, fireSwalUserAction } = useSwal();
@@ -61,7 +62,7 @@ export const useUsers = () => {
         //     type: 'SET_USERS',
         //     payload: usersDb,
         // });
-    }, [dispatch, usersDbPaginated]);
+    }, [dispatch, usersDbPaginated, page]);
 
 
 

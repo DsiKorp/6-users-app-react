@@ -8,9 +8,11 @@ import { useAuth } from "../auth/hooks/useAuth";
 export const UsersList = () => {
 
     //const { users } = useContext(UserContext);
-    const { users } = useUsers();
+    const { users, paginator } = useUsers();
     //const { isTokenAdmin } = use(AuthContext);
     const { isTokenAdmin } = useAuth();
+
+    const firstRowNumber = (paginator?.pageable?.offset ?? 0) + 1;
 
     //console.log('********************************')
     //console.log({ users });
@@ -22,6 +24,7 @@ export const UsersList = () => {
             <table className="table table-hover table-striped">
                 <thead>
                     <tr>
+                        <th>N°</th>
                         <th>Id</th>
                         <th>Usuario</th>
                         <th>Email</th>
@@ -38,8 +41,8 @@ export const UsersList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user) => (
-                        <UserRow key={user.id} user={user} />
+                    {users.map((user, index) => (
+                        <UserRow key={user.id} rowNumber={firstRowNumber + index} user={user} />
                     ))}
                 </tbody>
             </table>

@@ -1,4 +1,5 @@
 //import { useContext } from "react";
+
 import { UserModalForm } from "../componentes/UserModalForm";
 import { UsersList } from "../componentes/UsersList";
 //import { UserContext } from "../context/UserContext";
@@ -6,11 +7,13 @@ import { UsersList } from "../componentes/UsersList";
 import { useUsers } from "../hooks/useUsers";
 import { useAuth } from "../auth/hooks/useAuth";
 import { LoaderPage } from "../componentes/LoaderPage";
+import { Paginator } from "../componentes/Paginator";
 
 export const UsersPage = () => {
 
+    //const {page} = useParams();
     //const { users, isVisibleForm, handleOpenForm } = useContext(UserContext);
-    const { users, isVisibleForm, handleOpenForm, isLoading } = useUsers();
+    const { users, isVisibleForm, handleOpenForm, isLoading, paginator } = useUsers();
     //const { isTokenAdmin } = useContext(AuthContext)
     const { isTokenAdmin } = useAuth();
 
@@ -48,7 +51,10 @@ export const UsersPage = () => {
 
                         {!hasUsers
                             ? <div className="alert alert-warning">No hay usuarios en el sistema!</div>
-                            : <UsersList />
+                            : <>
+                                <UsersList />
+                                {paginator && <Paginator url="/users/page" paginator={paginator} />}
+                            </>
                         }
                     </div>
                 </div>
