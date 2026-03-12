@@ -2,6 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import * as z from 'zod';
 import type { AuthState } from "../../interfaces/loginUser.interface";
 
+const defaultAuthState: AuthState = {
+    isAuth: false,
+    isAdmin: false,
+    loggedUser: null,
+    isLoginLoading: false,
+};
+
 const LoggedUserSchema = z.object({
     username: z.string(),
 });
@@ -10,35 +17,38 @@ const AuthStateSchema = z.object({
     isAuth: z.boolean(),
     isAdmin: z.boolean().optional(),
     loggedUser: LoggedUserSchema.nullable(),
-    isLoginLoading: z.boolean(),
+    // Backward compatible with previously persisted authState payloads.
+    isLoginLoading: z.boolean().optional(),
 });
 
 export const getLoginInitialState = (): AuthState => {
     const loginData = sessionStorage.getItem('authState');
 
     if (!loginData) {
-        return {
-            isAuth: false,
-            isAdmin: false,
-            loggedUser: null,
-            isLoginLoading: false,
-        };
+        return defaultAuthState;
     }
 
-    const validation = AuthStateSchema.safeParse(JSON.parse(loginData));
+    let parsedAuthState: unknown;
+
+    try {
+        parsedAuthState = JSON.parse(loginData);
+    } catch {
+        sessionStorage.removeItem('authState');
+        return defaultAuthState;
+    }
+
+    const validation = AuthStateSchema.safeParse(parsedAuthState);
 
     if (validation.error) {
         sessionStorage.removeItem('authState');
-
-        return {
-            isAuth: false,
-            isAdmin: false,
-            loggedUser: null,
-            isLoginLoading: false,
-        };
+        return defaultAuthState;
     }
 
-    return validation.data;
+    return {
+        ...validation.data,
+        isAdmin: validation.data.isAdmin ?? false,
+        isLoginLoading: false,
+    };
 }
 
 export const authSlice = createSlice({

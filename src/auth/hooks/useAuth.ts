@@ -74,6 +74,7 @@ export const useAuth = () => {
                 isAuth: true,
                 isAdmin: decodedClaims.isAdmin,
                 loggedUser,
+                isLoginLoading: false,
             }));
 
             sessionStorage.setItem('token', token);
