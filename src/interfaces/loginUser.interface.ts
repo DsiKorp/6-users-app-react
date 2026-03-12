@@ -13,5 +13,6 @@ export interface AuthState {
     isAuth: boolean;
     isAdmin?: boolean | false;
     loggedUser: LoggedUser | null;
+    isLoginLoading: boolean;
     //isTokenAdmin: boolean | false;
 }

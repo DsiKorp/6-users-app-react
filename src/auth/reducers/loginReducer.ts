@@ -13,6 +13,7 @@ const AuthStateSchema = z.object({
     isAuth: z.boolean(),
     isAdmin: z.boolean().optional(),
     loggedUser: LoggedUserSchema.nullable(),
+    isLoginLoading: z.boolean().optional(),
 });
 
 export const getLoginInitialState = (): AuthState => {
@@ -23,6 +24,7 @@ export const getLoginInitialState = (): AuthState => {
             isAuth: false,
             isAdmin: false,
             loggedUser: null,
+            isLoginLoading: false,
         };
     }
 
@@ -35,10 +37,14 @@ export const getLoginInitialState = (): AuthState => {
             isAuth: false,
             isAdmin: false,
             loggedUser: null,
+            isLoginLoading: false,
         };
     }
 
-    return validation.data;
+    return {
+        ...validation.data,
+        isLoginLoading: validation.data.isLoginLoading ?? false,
+    };
 }
 
 export const loginReducer = (state: AuthState, action: AuthAction): AuthState => {
@@ -48,13 +54,15 @@ export const loginReducer = (state: AuthState, action: AuthAction): AuthState =>
             return {
                 isAuth: true,
                 loggedUser: action.payload.loggedUser,
-                isAdmin: action.payload.isAdmin
+                isAdmin: action.payload.isAdmin,
+                isLoginLoading: false,
             };
         case 'LOGOUT':
             return {
                 isAuth: false,
                 loggedUser: null,
                 isAdmin: false,
+                isLoginLoading: false,
             };
         default:
             return { ...state };

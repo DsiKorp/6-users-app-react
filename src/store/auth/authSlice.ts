@@ -10,6 +10,7 @@ const AuthStateSchema = z.object({
     isAuth: z.boolean(),
     isAdmin: z.boolean().optional(),
     loggedUser: LoggedUserSchema.nullable(),
+    isLoginLoading: z.boolean(),
 });
 
 export const getLoginInitialState = (): AuthState => {
@@ -20,6 +21,7 @@ export const getLoginInitialState = (): AuthState => {
             isAuth: false,
             isAdmin: false,
             loggedUser: null,
+            isLoginLoading: false,
         };
     }
 
@@ -32,6 +34,7 @@ export const getLoginInitialState = (): AuthState => {
             isAuth: false,
             isAdmin: false,
             loggedUser: null,
+            isLoginLoading: false,
         };
     }
 
@@ -46,13 +49,18 @@ export const authSlice = createSlice({
             state.isAuth = true;
             state.loggedUser = payload.loggedUser;
             state.isAdmin = payload.isAdmin;
+            state.isLoginLoading = false;
         },
         onLogout: (state) => {
             state.isAuth = false;
             state.loggedUser = null;
             state.isAdmin = false;
+            state.isLoginLoading = false;
+        },
+        onInitLogin: (state) => {
+            state.isLoginLoading = true;
         }
     }
 });
 
-export const { onLogin, onLogout } = authSlice.actions;
+export const { onLogin, onLogout, onInitLogin } = authSlice.actions;

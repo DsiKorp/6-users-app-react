@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { User } from '../../../interfaces/users.interfaces';
+import type { PaginatedUsers } from '../../../interfaces/PaginatedUsersI';
 
 export interface UserFormErrors {
     username: string;
@@ -61,6 +62,7 @@ export interface UsersState {
     userSelected: User;
     errors: UserFormErrors;
     isLoading: boolean;
+    paginator?: PaginatedUsers;
 }
 
 const initialState: UsersState = {
@@ -68,6 +70,7 @@ const initialState: UsersState = {
     userSelected: {} as User,
     errors: { ...initialUserFormErrors },
     isLoading: true,
+    paginator: {} as PaginatedUsers
 };
 
 // logic similar to usersReducer
@@ -75,8 +78,9 @@ export const usersSlice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        onSetUsers: (state, { payload }: PayloadAction<User[]>) => {
-            state.users = [...payload];
+        onSetUsers: (state, { payload }: PayloadAction<PaginatedUsers>) => {
+            state.users = [...payload.content];
+            state.paginator = payload;
             state.isLoading = false;
         },
         onAddUser: (state, { payload }: PayloadAction<User>) => {

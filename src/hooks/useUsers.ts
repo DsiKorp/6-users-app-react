@@ -21,46 +21,47 @@ import {
 } from "../store/slices/users/usersSlice";
 import { useNavigate } from "react-router-dom";
 //import { initialUsers } from '../mock-data/users.mock';
-import { useUsersQuery } from "../auth/hooks/useUsersQuery";
 import { saveUserAction } from "../auth/actions/save-user.action";
 import { updateUserAction } from "../auth/actions/update-user.action";
 import { deleteUserAction } from "../auth/actions/delete-user.action";
 //import { AuthContext } from "../auth/context/AuthContext";
 import { onCloseModal, onOpenModal } from "../store/slices/ui/uiSlice";
 import { useAuth } from "../auth/hooks/useAuth";
+import {
+    useUsersPaginatedQuery,
+    USERS_PAGINATED_QUERY_KEY,
+} from "../auth/hooks/useUsersPaginatedQuery";
 
 export const useUsers = () => {
 
     const navigate = useNavigate();
     //const [users, dispatch] = useReducer(usersReducer, []);
     // REDUX
-    const { users, userSelected, errors } = useSelector((state: { users: UsersState }) => state.users);
+    const { users, userSelected, errors, paginator } = useSelector((state: { users: UsersState }) => state.users);
     const { isVisibleForm } = useSelector((state: { ui: { isVisibleForm: boolean } }) => state.ui);
     const dispatch = useDispatch();
 
     const queryClient = useQueryClient();
     //const { handlerLogout, isTokenAdmin } = use(AuthContext);
     const { handlerLogout, isTokenAdmin } = useAuth();
-    const { data: usersDb, isLoading } = useUsersQuery();
+    //const { data: usersDb, isLoading } = useUsersQuery();
+    const currentPage = 0;
+    const { data: usersDbPaginated, isLoading } = useUsersPaginatedQuery(currentPage);
 
     //const [userSelected, setUserSelected] = useState<User>({} as User);
     const { fireSwal, fireSwalUserAction } = useSwal();
     //const [isVisibleForm, setIsVisibleForm] = useState(false);
 
 
-    const syncUsersCache = (updater: (currentUsers: User[]) => User[]) => {
-        queryClient.setQueryData<User[]>(['users'], (currentUsers = []) => updater(currentUsers));
-    };
-
     useEffect(() => {
-        if (!usersDb) return;
-        dispatch(onSetUsers([...usersDb]));
+        if (!usersDbPaginated) return;
+        dispatch(onSetUsers(usersDbPaginated));
 
         // dispatch({
         //     type: 'SET_USERS',
         //     payload: usersDb,
         // });
-    }, [dispatch, usersDb]);
+    }, [dispatch, usersDbPaginated]);
 
 
 
@@ -103,17 +104,7 @@ export const useUsers = () => {
             //     payload: userDb
             // });
 
-            syncUsersCache((currentUsers) => {
-                if (isNewUser) {
-                    return [...currentUsers, userDb];
-                }
-
-                return currentUsers.map((currentUser) =>
-                    currentUser.id === userDb.id ? userDb : currentUser
-                );
-            });
-
-            void queryClient.invalidateQueries({ queryKey: ['users'] });
+            void queryClient.invalidateQueries({ queryKey: [USERS_PAGINATED_QUERY_KEY] });
 
             const action = isNewUser ? 'Creado' : 'Actualizado';
             fireSwal({
@@ -183,8 +174,7 @@ export const useUsers = () => {
                     //     payload: id,
                     // });
 
-                    syncUsersCache((currentUsers) => currentUsers.filter((user) => user.id !== id));
-                    void queryClient.invalidateQueries({ queryKey: ['users'] });
+                    void queryClient.invalidateQueries({ queryKey: [USERS_PAGINATED_QUERY_KEY] });
 
                     fireSwal({
                         title: 'Usuario Eliminado!',
@@ -249,6 +239,7 @@ export const useUsers = () => {
         errors,
         isLoading,
         isVisibleForm,
+        paginator,
         users,
         userSelected,
         // Methods

@@ -23,6 +23,7 @@ export const UserRoutes = () => {
       <Navbar />
       <Routes>
         <Route path="users" element={<UsersPage />} />
+        <Route path="users/page/:page" element={<UsersPage />} />
         <Route
           path="users/register"
           element={isTokenAdmin() ? <RegisterPage /> : <Navigate to="/users" replace />}

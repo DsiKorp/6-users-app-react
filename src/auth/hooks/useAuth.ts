@@ -8,7 +8,8 @@ import type { AuthState, Credentials, LoggedUser } from "../../interfaces/loginU
 //import { loginReducer, getLoginInitialState } from "../reducers/loginReducer";
 import { loginAction } from "../actions/login.action";
 import { AUTH_QUERY_KEY } from "./useAuthQuery";
-import { onLogin, onLogout } from "../../store/auth/authSlice";
+import { USERS_PAGINATED_QUERY_KEY } from "./useUsersPaginatedQuery";
+import { onLogin, onLogout, onInitLogin } from "../../store/auth/authSlice";
 
 
 export type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
@@ -35,13 +36,14 @@ export const useAuth = () => {
     };
 
     //const [login, dispatch] = useReducer(loginReducer, getLoginInitialState());
-    const { loggedUser, isAdmin, isAuth } = useSelector((state: { auth: AuthState }) => state.auth);
+    const { loggedUser, isAdmin, isAuth, isLoginLoading } = useSelector((state: { auth: AuthState }) => state.auth);
     const [authStatus, setAuthStatus] = useState<AuthStatus>(getInitialAuthStatus(isAuth));
 
     const handlerLogin = async (userCredentials: Credentials) => {
         //const isLogin = loginUser(userCredentials);
 
         try {
+            dispatch(onInitLogin());
             const loginResponse = await executeLogin(userCredentials);
             //console.log({ loginResponse });
 
@@ -80,6 +82,7 @@ export const useAuth = () => {
             navigate('/users');
         } catch (error) {
             setAuthStatus('not-authenticated');
+            dispatch(onLogout());
 
             if (error instanceof Error && 'response' in error && (error as any).response?.status === 401) {
                 fireSwal({
@@ -108,6 +111,7 @@ export const useAuth = () => {
 
         // Clean users cache on logout to avoid stale or unauthorized data.
         queryClient.removeQueries({ queryKey: ['users'] });
+        queryClient.removeQueries({ queryKey: [USERS_PAGINATED_QUERY_KEY] });
         queryClient.removeQueries({ queryKey: AUTH_QUERY_KEY });
 
         sessionStorage.removeItem('authState');
@@ -138,7 +142,8 @@ export const useAuth = () => {
         login: {
             loggedUser,
             isAdmin,
-            isAuth
+            isAuth,
+            isLoginLoading,
         },
         authStatus,
         handlerLogin,
